@@ -1,2 +1,5 @@
-.venv
+/venv
 .env
+/backend/projectMalla/__pycache__
+/backend/core/__pycache__
+/backend/core/migrations/__pycache__
