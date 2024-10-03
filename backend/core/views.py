@@ -5,8 +5,6 @@ from .neo4j_config import Neo4jConnection
 from rest_framework.response import Response
 
 # URI y autenticación para la base de datos Neo4j
-URI = "neo4j+s://58d164bb.databases.neo4j.io"
-AUTH = ("neo4j", "hpTDY017wzSUH4BPo-hRgvqbXZuXu4PWQhtr4Hpgc60")  
 class AsignaturaViewSet(viewsets.ModelViewSet):
     queryset = Asignatura.objects.all()
     serializer_class = AsignaturaSerializer
