@@ -3,3 +3,5 @@
 /backend/projectMalla/__pycache__/*
 /backend/core/__pycache__/*
 /backend/core/migrations/__pycache__/*
+/backend/db.sqlite3
+/backend/core/migrations/0001_initial.py
