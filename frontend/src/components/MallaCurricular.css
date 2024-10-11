@@ -1,0 +1,83 @@
+.malla-curricular {
+    overflow-x: auto;
+    /* Habilitar desplazamiento horizontal */
+}
+
+.malla-container {
+    display: flex;
+    /* Usar flexbox para las columnas */
+}
+
+.semestre-columna {
+    min-width: 300px;
+    /* Ajusta según sea necesario */
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    /* Borde para cada columna */
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    /* Fondo claro para las columnas */
+}
+
+.contenido-semestre {
+    display: flex;
+    /* Hacer que el contenido del semestre sea flexible */
+}
+
+.practica-columna {
+    background-color: #e9f7ef;
+    /* Fondo distinto para las prácticas */
+    padding: 10px;
+    border: 1px solid #28a745;
+    /* Borde verde para las prácticas */
+    border-radius: 5px;
+    margin-right: 10px;
+    /* Espacio entre las prácticas y las asignaturas */
+    flex: 0 0 150px;
+    /* Ancho fijo para la columna de prácticas */
+}
+
+.asignaturas-columna {
+    flex: 1;
+    /* Columna flexible para las asignaturas */
+}
+
+.cuadro {
+    padding: 10px;
+    border: 1px solid #007bff;
+    /* Borde azul para las asignaturas */
+    border-radius: 5px;
+    margin-bottom: 5px;
+    /* Espacio entre los cuadros */
+    background-color: #f1f1f1;
+    /* Fondo para los cuadros */
+}
+
+
+h3 {
+    text-align: center;
+    /* Centrar el título del semestre */
+    font-size: 1.2rem;
+    /* Tamaño de fuente */
+    color: #333;
+    /* Color del texto */
+}
+
+ul {
+    list-style-type: none;
+    /* Quitar los puntos de la lista */
+    padding: 0;
+    /* Quitar el padding */
+    margin: 0;
+    /* Quitar el margin */
+}
+
+li {
+    padding: 5px;
+    /* Espacio en cada elemento de la lista */
+    border-bottom: 1px solid #eee;
+    /* Línea entre las asignaturas */
+    color: #555;
+    /* Color del texto */
+}
