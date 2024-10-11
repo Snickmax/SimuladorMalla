@@ -1,10 +1,10 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 from .views import AsignaturaViewSet
 
-router = DefaultRouter()
-router.register(r'asignaturas', AsignaturaViewSet)
+asignatura_list = AsignaturaViewSet.as_view({'get': 'list'})
+asignatura_create = AsignaturaViewSet.as_view({'post': 'create'})
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('asignaturas/', asignatura_list, name='asignatura-list'),
+    path('asignaturas/create/', asignatura_create, name='asignatura-create'),
 ]

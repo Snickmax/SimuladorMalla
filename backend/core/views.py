@@ -1,63 +1,52 @@
 from rest_framework import viewsets
-from .models import Asignatura
-from .serializers import AsignaturaSerializer
-from .neo4j_config import Neo4jConnection
 from rest_framework.response import Response
+from rest_framework import status
+from .neo4j_config import Neo4jConnection
 
-# URI y autenticación para la base de datos Neo4j
-class AsignaturaViewSet(viewsets.ModelViewSet):
-    queryset = Asignatura.objects.all()
-    serializer_class = AsignaturaSerializer
+class AsignaturaViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        conn = Neo4jConnection()  # Crear una instancia de la clase
+        conn = Neo4jConnection()  # Crear una instancia de la clase Neo4jConnection
         with conn.driver.session() as session:
-            result = session.run("MATCH (a:Asignatura) RETURN a")
-            asignaturas = [
-                {
-                    "id": record["a"]["id"],
-                    "creditos": record["a"]["creditos"],
-                    "nombre": record["a"]["nombre"]
-                }
-                for record in result
-            ]
-        conn.close()  # Asegúrate de cerrar la conexión
-        serializer = AsignaturaSerializer(asignaturas, many=True)
-        return Response(serializer.data)
-    
-    def perform_create(self, serializer):
-        instance = serializer.save()
-        self.create_neo4j_node(instance)
+            # Consulta de Neo4j para obtener asignaturas y agruparlas por semestre
+            result = session.run("""
+                MATCH (a:Asignatura)-[p:PERTENECE_A]->(c:Carrera)
+                RETURN a.id AS id, a.nombre AS nombre, a.creditos AS creditos, p.semestre AS semestre
+                ORDER BY p.semestre
+            """)
 
-    def create_neo4j_node(self, instance):
-        with Neo4jConnection() as conn:
-            with conn.driver.session() as session:
-                session.run(
-                    "CREATE (a:Asignatura {id: $id, creditos: $creditos, nombre: $nombre})",
-                    id=instance.id, creditos=instance.creditos, nombre=instance.nombre
-                )
+            asignaturas_por_semestre = {}
+            for record in result:
+                semestre = record["semestre"]
+                if semestre not in asignaturas_por_semestre:
+                    asignaturas_por_semestre[semestre] = []
+                asignaturas_por_semestre[semestre].append({
+                    "id": record["id"],
+                    "nombre": record["nombre"],
+                    "creditos": record["creditos"]
+                })
 
-    def perform_update(self, serializer):
-        instance = serializer.save()
-        self.update_neo4j_node(instance)
+        conn.close()  # Cerrar la conexión
 
-    def update_neo4j_node(self, instance):
-        with Neo4jConnection() as conn:
-            with conn.driver.session() as session:
-                session.run(
-                    "MATCH (a:Asignatura {id: $id}) "
-                    "SET a.creditos = $creditos, a.nombre = $nombre",
-                    id=instance.id, creditos=instance.creditos, nombre=instance.nombre
-                )
+        return Response(asignaturas_por_semestre)
 
-    def perform_destroy(self, instance):
-        self.delete_neo4j_node(instance)
-        instance.delete()
 
-    def delete_neo4j_node(self, instance):
-        with Neo4jConnection() as conn:
-            with conn.driver.session() as session:
-                session.run(
-                    "MATCH (a:Asignatura {id: $id}) DELETE a",
-                    id=instance.id
-                )
+    def create(self, request):
+        nombre = request.data.get('nombre')
+        creditos = request.data.get('creditos')
+        id_asignatura = request.data.get('id')
+        
+        if not nombre or not creditos or not id_asignatura:
+            return Response({"error": "Todos los campos (id, nombre, créditos) son obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
+
+        conn = Neo4jConnection()
+        with conn.driver.session() as session:
+            session.run(
+                """
+                CREATE (a:Asignatura {id: $id, nombre: $nombre, creditos: $creditos})
+                """,
+                id=id_asignatura, nombre=nombre, creditos=creditos
+            )
+        conn.close()
+
+        return Response({"message": "Nodo de asignatura creado exitosamente"}, status=status.HTTP_201_CREATED)
