@@ -6,9 +6,8 @@ from .neo4j_config import Neo4jConnection
 class AsignaturaViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        conn = Neo4jConnection()  # Crear una instancia de la clase Neo4jConnection
+        conn = Neo4jConnection()
         with conn.driver.session() as session:
-            # Consulta de Neo4j para obtener asignaturas y agruparlas por semestre
             result = session.run("""
                 MATCH (a:Asignatura)-[p:PERTENECE_A]->(c:Carrera)
                 RETURN a.id AS id, a.nombre AS nombre, a.creditos AS creditos, p.semestre AS semestre
@@ -26,10 +25,9 @@ class AsignaturaViewSet(viewsets.ViewSet):
                     "creditos": record["creditos"]
                 })
 
-        conn.close()  # Cerrar la conexión
+        conn.close()
 
         return Response(asignaturas_por_semestre)
-
 
     def create(self, request):
         nombre = request.data.get('nombre')
@@ -50,3 +48,34 @@ class AsignaturaViewSet(viewsets.ViewSet):
         conn.close()
 
         return Response({"message": "Nodo de asignatura creado exitosamente"}, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, pk=None):
+        if pk is None:
+            return Response({"error": "ID de asignatura es requerido para eliminar"}, status=status.HTTP_400_BAD_REQUEST)
+
+        conn = Neo4jConnection()
+        with conn.driver.session() as session:
+            # Primero, verifica si la asignatura existe
+            result = session.run(
+                """
+                MATCH (a:Asignatura {id: $id})
+                RETURN a
+                """,
+                id=pk
+            )
+
+            if not result.single():  # Si no se encuentra la asignatura
+                return Response({"error": "Asignatura no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Si se encuentra, procede a eliminarla
+            session.run(
+                """
+                MATCH (a:Asignatura {id: $id})
+                DELETE a
+                """,
+                id=pk
+            )
+
+        conn.close()
+
+        return Response({"message": "Nodo de asignatura eliminado exitosamente"}, status=status.HTTP_204_NO_CONTENT)
