@@ -43,6 +43,25 @@
     /* Columna flexible para las asignaturas */
 }
 
+
+.ulPracticas, .ulAsignaturas {
+    list-style-type: none;
+    /* Quitar los puntos de la lista */
+    padding: 0;
+    /* Quitar el padding */
+    margin: 0;
+    /* Quitar el margin */
+}
+
+.ilPracticas, .ilAsignaturas{
+    padding: 5px;
+    /* Espacio en cada elemento de la lista */
+    border-bottom: 1px solid #eee;
+    /* Línea entre las asignaturas */
+    color: #555;
+    /* Color del texto */
+}
+
 .cuadro {
     padding: 10px;
     border: 1px solid #007bff;
@@ -54,6 +73,10 @@
     /* Fondo para los cuadros */
 }
 
+.offcanvas {
+    width: 300px;
+    /* Ajusta el ancho según sea necesario */
+}
 
 h3 {
     text-align: center;
@@ -61,23 +84,5 @@ h3 {
     font-size: 1.2rem;
     /* Tamaño de fuente */
     color: #333;
-    /* Color del texto */
-}
-
-ul {
-    list-style-type: none;
-    /* Quitar los puntos de la lista */
-    padding: 0;
-    /* Quitar el padding */
-    margin: 0;
-    /* Quitar el margin */
-}
-
-li {
-    padding: 5px;
-    /* Espacio en cada elemento de la lista */
-    border-bottom: 1px solid #eee;
-    /* Línea entre las asignaturas */
-    color: #555;
     /* Color del texto */
 }
