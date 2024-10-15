@@ -45,16 +45,14 @@ const MallaCurricular = () => {
               <div className="contenido-semestre">
                 {practicas.length > 0 && (
                   <div className="practica-columna">
-                    <h4>Prácticas</h4>
                     {practicas.map(practica => (
                       <ul className='ulPracticas' key={practica.id}>
-                        <li className='ilPracticas'>{practica.nombre} ({practica.creditos} créditos)</li>
+                        <li className='ilPracticas' onClick={() => handleAsignaturaClick(practica)} >{practica.nombre} ({practica.creditos} créditos)</li>
                       </ul>
                     ))}
                   </div>
                 )}
                 <div className="asignaturas-columna">
-                  <h4>Asignaturas</h4>
                   <ul className='ulAsignaturas'>
                     {asignaturasSinPracticas.map(asignatura => (
                       <li key={asignatura.id} className="cuadro ilAsignaturas" onClick={() => handleAsignaturaClick(asignatura)}>
@@ -71,18 +69,13 @@ const MallaCurricular = () => {
 
       <Offcanvas show={showOffcanvas} onHide={handleCloseOffcanvas} placement="start">
         <Offcanvas.Header closeButton>
-          <Offcanvas.Title>{selectedAsignatura?.nombre}</Offcanvas.Title>
+          <Offcanvas.Title>{selectedAsignatura?.nombre} {selectedAsignatura?.creditos}</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <p><strong>Descripción:</strong> {selectedAsignatura?.descripcion}</p>
           <p><strong>Prerrequisitos:</strong></p>
           <ul>
-            {selectedAsignatura?.prerrequisitos?.reduce((unique, prer) => {
-              if (!unique.some(item => item.nombre === prer.nombre)) {
-                unique.push(prer);
-              }
-              return unique;
-            }, []).map(prer => (
+            {selectedAsignatura?.prerrequisitos?.map((prer) => (
               <li key={prer.id}>
                 {prer.nombre} ({prer.creditos} créditos)
               </li>
