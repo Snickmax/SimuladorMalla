@@ -17,7 +17,7 @@ class AsignaturaViewSet(viewsets.ViewSet):
                 RETURN a.id AS id, a.descripcion AS descripcion, a.nombre AS nombre, a.creditos AS creditos, 
                     p.semestre AS semestre, prerrequisitos, postrequisitos
                 ORDER BY p.semestre
-            """)
+            """) 
 
             asignaturas_por_semestre = {}
             for record in result:
