@@ -8,6 +8,7 @@ const MallaCurricular = () => {
   const [selectedAsignatura, setSelectedAsignatura] = useState(null);
   const [hoveredAsignatura, setHoveredAsignatura] = useState(null);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [notMenu, setNotMenu] = useState(false);
 
   useEffect(() => {
     const storedAsignaturas = localStorage.getItem('asignaturas');
@@ -44,6 +45,11 @@ const MallaCurricular = () => {
     setHoveredAsignatura(null);
   };
 
+  const toggleNotMenu = () => {
+    setNotMenu(!notMenu);
+    handleCloseMenu();
+  };
+
   const getBackgroundStyle = (asignatura) => {
     if (
       hoveredAsignatura &&
@@ -69,7 +75,23 @@ const MallaCurricular = () => {
       <div className='header'>
         <h1>Malla Interactiva</h1>
         <h2>Ingeniería Civil en Computación e Informática</h2>
+        
+        {/* Switch de Bootstrap para activar/desactivar el menú */}
+        <div className="form-check form-switch">
+          <input 
+            className="form-check-input" 
+            type="checkbox" 
+            role="switch" 
+            id="flexSwitchCheckDefault" 
+            checked={notMenu} 
+            onChange={toggleNotMenu} 
+          />
+          <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+            {notMenu ? "Desactivar Menú" : "Activar Menú"}
+          </label>
+        </div>
       </div>
+
       <div className='malla-curricular'>
         <div className="malla-container">
           {Object.keys(asignaturas).map(semestre => {
@@ -86,7 +108,7 @@ const MallaCurricular = () => {
                       {practicas.map(practica => (
                         <div className='ulPracticas'
                           key={practica.id}
-                          onClick={() => handleAsignaturaClick(practica)}
+                          onClick={notMenu ? () => handleAsignaturaClick(practica) : () => { }}
                           onMouseEnter={() => handleMouseEnter(practica)}
                           onMouseLeave={handleMouseLeave}
                           style={getBackgroundStyle(practica)}>
@@ -103,7 +125,8 @@ const MallaCurricular = () => {
                       <div
                         key={asignatura.id}
                         className="cuadro ilAsignaturas"
-                        onClick={() => handleAsignaturaClick(asignatura)}
+
+                        onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => { }}
                         onMouseEnter={() => handleMouseEnter(asignatura)}
                         onMouseLeave={handleMouseLeave}
                         style={getBackgroundStyle(asignatura)}
@@ -142,8 +165,6 @@ const MallaCurricular = () => {
         </div>
       </div>
     </div>
-
-
   );
 };
 

@@ -65,6 +65,7 @@
 .practica-columna {
     background-color: #e9f7ef;
     /* Fondo distinto para las prácticas */
+    width: 50px;
     padding: 0px;
     border: 1px solid #28a745;
     /* Borde verde para las prácticas */
