@@ -1,6 +1,38 @@
 .malla-curricular {
     overflow-x: auto;
-    display: flex; 
+    display: flex;
+    transition: margin-left 0.3s ease;
+}
+
+.menu-visible .malla-container, .menu-visible .header {
+    margin-left: 310px;
+    /* Ajustar este valor según el ancho del menú lateral */
+}
+
+.sidebar {
+    width: 300px;
+    background-color: #f8f9fa;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: -300px;
+    transition: left 0.3s ease;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.visible {
+    left: 0;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
 }
 
 .malla-container {
@@ -12,16 +44,21 @@
 .semestre-columna {
     margin: 4px;
     padding: 10px;
-    border: 1px solid #ccc; /* Borde para cada columna */
+    border: 1px solid #ccc;
+    /* Borde para cada columna */
     border-radius: 5px;
-    background-color: #f9f9f9; /* Fondo claro para las columnas */
-    display: flex; /* Asegúrate de que sea un contenedor flexible */
-    flex-direction: column; /* Para apilar contenido verticalmente */
+    background-color: #f9f9f9;
+    /* Fondo claro para las columnas */
+    display: flex;
+    /* Asegúrate de que sea un contenedor flexible */
+    flex-direction: column;
+    /* Para apilar contenido verticalmente */
 }
 
 .contenido-semestre {
     display: flex;
-    height: auto; /* Permitir que el alto se ajuste al contenido */
+    height: auto;
+    /* Permitir que el alto se ajuste al contenido */
     flex-grow: 1;
 }
 
@@ -39,8 +76,10 @@
 
 .ulAsignaturas {
     display: flex;
-    flex-direction: column; /* Apilar asignaturas verticalmente */
-    flex-grow: 1; /* Permitir que ocupe el espacio restante */
+    flex-direction: column;
+    /* Apilar asignaturas verticalmente */
+    flex-grow: 1;
+    /* Permitir que ocupe el espacio restante */
 }
 
 .ulPracticas {
@@ -59,7 +98,8 @@
     /* Espacio en cada elemento de la lista */
     color: #555;
     /* Color del texto */
-    white-space: nowrap; /* Evitar que se divida en líneas */  
+    white-space: nowrap;
+    /* Evitar que se divida en líneas */
 }
 
 .ilAsignaturas {
@@ -70,9 +110,13 @@
     /* Color del texto */
 }
 
-.ilAsignaturas:hover, .ulPracticas:hover , .ulPracticas:hover .ilPracticas {
-    background-color: #333; /* Cambiar color de fondo al pasar el ratón */
-    color: #fff; /* Cambiar color de texto para mayor contraste */
+.ilAsignaturas:hover,
+.ulPracticas:hover,
+.ulPracticas:hover .ilPracticas {
+    background-color: #333;
+    /* Cambiar color de fondo al pasar el ratón */
+    color: #fff;
+    /* Cambiar color de texto para mayor contraste */
 }
 
 
@@ -88,11 +132,6 @@
     /* Fondo para los cuadros */
 }
 
-.offcanvas {
-    width: 300px;
-    /* Ajusta el ancho según sea necesario */
-}
-
 h3 {
     text-align: center;
     /* Centrar el título del semestre */
@@ -100,5 +139,14 @@ h3 {
     /* Tamaño de fuente */
     color: #333;
     /* Color del texto */
-    white-space: nowrap; /* Evitar que se divida en líneas */
+    white-space: nowrap;
+    /* Evitar que se divida en líneas */
+}
+
+ul {
+    padding-left: 20px;
+}
+
+ul li {
+    margin-bottom: 10px;
 }
