@@ -8,7 +8,7 @@ const SubjectForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await axios.post('http://localhost:8000/asignaturas/', {
+        await axios.post('http://localhost:8000/asignaturas/create/', {
             id,
             creditos,
             nombre,
