@@ -6,26 +6,43 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const MallaCurricular = () => {
   const [asignaturas, setAsignaturas] = useState({});
   const [selectedAsignatura, setSelectedAsignatura] = useState(null);
+  const [carreras, setCarreras] = useState([]);
+  const [selectedCarrera, setSelectedCarrera] = useState('');
   const [hoveredAsignatura, setHoveredAsignatura] = useState(null);
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [notMenu, setNotMenu] = useState(false);
 
   useEffect(() => {
-    const storedAsignaturas = localStorage.getItem('asignaturas');
+    const fetchCarreras = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/carreras/');
+        setCarreras(response.data);
+        const response1 = await axios.get(`http://localhost:8000/asignaturas/?carreraId=${response.data[0]['id']}`);
+        setAsignaturas(response1.data);    
+      } catch (error) {
+        console.error('Error fetching carreras:', error);
+      }
+    };
 
-    if (storedAsignaturas) {
-      setAsignaturas(JSON.parse(storedAsignaturas));
-    } else {
-      axios.get('http://localhost:8000/asignaturas/')
-        .then(response => {
-          setAsignaturas(response.data);
-          localStorage.setItem('asignaturas', JSON.stringify(response.data));
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
-        });
-    }
+    fetchCarreras();
   }, []);
+  
+  const handleCarreraChange = async (e) => {
+    const carreraId = e.target.value;
+    setSelectedCarrera(carreraId);
+
+    // Fetch asignaturas para la carrera seleccionada
+    if (carreraId) {
+      try {
+        const response = await axios.get(`http://localhost:8000/asignaturas/?carreraId=${carreraId}`);
+        setAsignaturas(response.data);
+      } catch (error) {
+        console.error('Error fetching asignaturas:', error);
+      }
+    } else {
+      setAsignaturas({}); // Resetear asignaturas si no hay carrera seleccionada
+    }
+  };
 
   const handleAsignaturaClick = (asignatura) => {
     setSelectedAsignatura(asignatura);
@@ -62,7 +79,7 @@ const MallaCurricular = () => {
     if (
       hoveredAsignatura &&
       hoveredAsignatura.postrequisitos.some(
-        (postrequisitos) => postrequisitos.id === asignatura.id
+        (postrequisito) => postrequisito.id === asignatura.id
       )
     ) {
       return { backgroundColor: 'orange' };
@@ -74,9 +91,12 @@ const MallaCurricular = () => {
     <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>
       <div className='header'>
         <h1>Malla Interactiva</h1>
-        <h2>Ingeniería Civil en Computación e Informática</h2>
+        <select value={selectedCarrera} onChange={handleCarreraChange}>
+          {carreras.map((carrera) => (
+            <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
+          ))}
+        </select>
         
-        {/* Switch de Bootstrap para activar/desactivar el menú */}
         <div className="form-check form-switch">
           <input 
             className="form-check-input" 
@@ -108,7 +128,7 @@ const MallaCurricular = () => {
                       {practicas.map(practica => (
                         <div className='ulPracticas'
                           key={practica.id}
-                          onClick={notMenu ? () => handleAsignaturaClick(practica) : () => { }}
+                          onClick={notMenu ? () => handleAsignaturaClick(practica) : () => {}}
                           onMouseEnter={() => handleMouseEnter(practica)}
                           onMouseLeave={handleMouseLeave}
                           style={getBackgroundStyle(practica)}>
@@ -125,8 +145,7 @@ const MallaCurricular = () => {
                       <div
                         key={asignatura.id}
                         className="cuadro ilAsignaturas"
-
-                        onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => { }}
+                        onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => {}}
                         onMouseEnter={() => handleMouseEnter(asignatura)}
                         onMouseLeave={handleMouseLeave}
                         style={getBackgroundStyle(asignatura)}
@@ -141,7 +160,6 @@ const MallaCurricular = () => {
           })}
         </div>
 
-        {/* Menú lateral (Sidebar) */}
         <div className={`sidebar ${isMenuVisible ? 'visible' : ''}`}>
           <button className="close-btn" onClick={handleCloseMenu}>X</button>
           <h2>{selectedAsignatura?.nombre} ({selectedAsignatura?.creditos} créditos)</h2>

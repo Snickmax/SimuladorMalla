@@ -14,3 +14,7 @@ class Neo4jConnection:
 
     def close(self):
         self.driver.close()
+        
+    def session(self):
+        """Abre una nueva sesión con la base de datos."""
+        return self.driver.session()
