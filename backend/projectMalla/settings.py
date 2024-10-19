@@ -129,3 +129,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Ajusta según tu frontend
 ]
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': 'CLIENT_ID',
+            'secret': 'CLIENT_SECRET',
+            'key': ''
+        }
+    }
+}
