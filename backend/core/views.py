@@ -71,9 +71,34 @@ class AsignaturaViewSet(viewsets.ViewSet):
         conn.close()
 
         return Response({"message": "Nodo de asignatura creado exitosamente"}, status=status.HTTP_201_CREATED)
-    
-class UsuarioViewSet(viewsets.ViewSet):
+    def actualizar_asignatura(request):
+        email = request.data.get('email')
+        asignatura_id = request.data.get('asignaturaId')
+        nuevo_estado = request.data.get('nuevoEstado')
 
+        # Validar datos de entrada
+        if not email or not asignatura_id or not nuevo_estado:
+            return Response({"error": "Se requieren email, id de asignatura y nuevo estado."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validar el nuevo estado
+        if nuevo_estado not in ['noCursado', 'enCurso', 'aprobado']:
+            return Response({"error": "El estado debe ser 'noCursado', 'enCurso' o 'aprobado'."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Lógica para actualizar el estado en Neo4j
+        conn = Neo4jConnection()
+        with conn.driver.session() as session:
+            session.run(
+                """
+                MATCH (a:Asignatura {id: $id})
+                SET a.estado = $estado
+                """,
+                id=asignatura_id, estado=nuevo_estado
+            )
+        conn.close()
+
+        return Response({"message": "Estado de la asignatura actualizado exitosamente"}, status=status.HTTP_200_OK)
+        
+class UsuarioViewSet(viewsets.ViewSet):
     def create(self, request):
         email = request.data.get('email')
 
@@ -104,3 +129,46 @@ class UsuarioViewSet(viewsets.ViewSet):
 
         conn.close()
         return Response({"message": "Usuario creado exitosamente"}, status=status.HTTP_201_CREATED)
+
+    def guardar_asignaturas_en_curso(self, request):
+        email = request.data.get('email')
+        asignaturas_en_curso = request.data.get('asignaturas')  # Asegúrate de que envías esta lista
+        
+
+        if not email or not asignaturas_en_curso:
+            return Response({"error": "Los campos 'email' y 'asignaturas' son obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
+
+        conn = Neo4jConnection()
+        with conn.driver.session() as session:
+            # Aquí puedes manejar la lógica para guardar las asignaturas en curso
+            for asignatura_id in asignaturas_en_curso:
+                session.run(
+                    """
+                    MATCH (u:Usuario {email: $email}), (a:Asignatura {id: $asignatura_id})
+                    MERGE (u)-[r:CURSA]->(a)
+                    SET r.estado = 'enCurso' 
+                    """,
+                    email=email,
+                    asignatura_id=asignatura_id
+                )
+
+        conn.close()
+        return Response({"message": "Asignaturas en curso guardadas exitosamente"}, status=status.HTTP_200_OK)
+    
+    def obtener_creditos_asignatura(self, request, id_asignatura):
+        conn = Neo4jConnection()
+        with conn.driver.session() as session:
+            result = session.run(
+                """
+                MATCH (a:Asignatura {id: $id_asignatura})
+                RETURN a.creditos AS creditos
+                """,
+                id_asignatura=id_asignatura
+            ).single()
+
+        conn.close()
+
+        if result:
+            return Response({"creditos": result["creditos"]}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Asignatura no encontrada"}, status=status.HTTP_404_NOT_FOUND)
