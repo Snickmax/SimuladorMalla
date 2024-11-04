@@ -14,7 +14,6 @@ class AsignaturaViewSet(viewsets.ViewSet):
         conn.close()
         return Response(carreras)
 
-    
     def list_asignaturas(self, request):
         carrera_id = request.query_params.get('carreraId')
         
@@ -29,7 +28,7 @@ class AsignaturaViewSet(viewsets.ViewSet):
                 RETURN a.id AS id, a.descripcion AS descripcion, a.nombre AS nombre, a.creditos AS creditos, 
                     p.semestre AS semestre, prerrequisitos, postrequisitos
                 ORDER BY p.semestre
-            """, carrera_id=carrera_id) 
+            """, carrera_id=carrera_id)
 
             asignaturas_por_semestre = {}
             for record in result:
@@ -51,7 +50,6 @@ class AsignaturaViewSet(viewsets.ViewSet):
     
         return Response(asignaturas_por_semestre)
 
-
     def create(self, request):
         nombre = request.data.get('nombre')
         creditos = request.data.get('creditos')
@@ -71,32 +69,6 @@ class AsignaturaViewSet(viewsets.ViewSet):
         conn.close()
 
         return Response({"message": "Nodo de asignatura creado exitosamente"}, status=status.HTTP_201_CREATED)
-    def actualizar_asignatura(request):
-        email = request.data.get('email')
-        asignatura_id = request.data.get('asignaturaId')
-        nuevo_estado = request.data.get('nuevoEstado')
-
-        # Validar datos de entrada
-        if not email or not asignatura_id or not nuevo_estado:
-            return Response({"error": "Se requieren email, id de asignatura y nuevo estado."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Validar el nuevo estado
-        if nuevo_estado not in ['noCursado', 'enCurso', 'aprobado']:
-            return Response({"error": "El estado debe ser 'noCursado', 'enCurso' o 'aprobado'."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Lógica para actualizar el estado en Neo4j
-        conn = Neo4jConnection()
-        with conn.driver.session() as session:
-            session.run(
-                """
-                MATCH (a:Asignatura {id: $id})
-                SET a.estado = $estado
-                """,
-                id=asignatura_id, estado=nuevo_estado
-            )
-        conn.close()
-
-        return Response({"message": "Estado de la asignatura actualizado exitosamente"}, status=status.HTTP_200_OK)
         
 class UsuarioViewSet(viewsets.ViewSet):
     def create(self, request):
@@ -130,30 +102,74 @@ class UsuarioViewSet(viewsets.ViewSet):
         conn.close()
         return Response({"message": "Usuario creado exitosamente"}, status=status.HTTP_201_CREATED)
 
-    def guardar_asignaturas_en_curso(self, request):
+    def guardar_asignaturas(self, request):
         email = request.data.get('email')
-        asignaturas_en_curso = request.data.get('asignaturas')  # Asegúrate de que envías esta lista
-        
+        asignaturas_en_curso = request.data.get('asignaturas_en_curso', [])
+        asignaturas_aprobadas = request.data.get('asignaturas_aprobadas', [])
 
-        if not email or not asignaturas_en_curso:
-            return Response({"error": "Los campos 'email' y 'asignaturas' son obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
+        if not email or not (asignaturas_en_curso or asignaturas_aprobadas):
+            return Response({"error": "Los campos 'email', 'asignaturas_en_curso' y 'asignaturas_aprobadas' son obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
 
         conn = Neo4jConnection()
         with conn.driver.session() as session:
-            # Aquí puedes manejar la lógica para guardar las asignaturas en curso
+            # Guardar asignaturas en curso
             for asignatura_id in asignaturas_en_curso:
                 session.run(
                     """
                     MATCH (u:Usuario {email: $email}), (a:Asignatura {id: $asignatura_id})
                     MERGE (u)-[r:CURSA]->(a)
-                    SET r.estado = 'enCurso' 
+                    SET r.estado = 'enCurso'
+                    """,
+                    email=email,
+                    asignatura_id=asignatura_id
+                )
+
+            # Guardar asignaturas aprobadas
+            for asignatura_id in asignaturas_aprobadas:
+                # Primero eliminar cualquier relación en curso
+                session.run(
+                    """
+                    MATCH (u:Usuario {email: $email})-[r:CURSA {estado: 'enCurso'}]->(a:Asignatura {id: $asignatura_id})
+                    DELETE r
+                    """,
+                    email=email,
+                    asignatura_id=asignatura_id
+                )
+                
+                # Luego crear la relación con el estado aprobado
+                session.run(
+                    """
+                    MATCH (u:Usuario {email: $email}), (a:Asignatura {id: $asignatura_id})
+                    MERGE (u)-[r:CURSA]->(a)
+                    SET r.estado = 'aprobado'
                     """,
                     email=email,
                     asignatura_id=asignatura_id
                 )
 
         conn.close()
-        return Response({"message": "Asignaturas en curso guardadas exitosamente"}, status=status.HTTP_200_OK)
+        return Response({"message": "Asignaturas guardadas exitosamente"}, status=status.HTTP_200_OK)
+    
+    def eliminar_relacion_asignatura(self, request, id_asignatura=None):
+        email = request.data.get('email')
+
+        if not email or not id_asignatura:
+            return Response({"error": "Los campos 'email' y 'id_asignatura' son obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
+
+        conn = Neo4jConnection()
+        with conn.driver.session() as session:
+            session.run(
+                """
+                MATCH (u:Usuario {email: $email})-[r:CURSA]->(a:Asignatura {id: $asignatura_id})
+                DELETE r
+                """,
+                email=email,
+                asignatura_id=id_asignatura
+            )
+
+        conn.close()
+        return Response({"message": "Asignatura eliminada exitosamente"}, status=status.HTTP_200_OK)
+    
     
     def obtener_creditos_asignatura(self, request, id_asignatura):
         conn = Neo4jConnection()

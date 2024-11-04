@@ -69,74 +69,90 @@ const Simulador = () => {
         }
     };
 
-    const handleAsignaturaClick = async (asignatura) => {
+    const handleAsignaturaClick = (asignatura) => {
         if (!user) {
             console.log('Necesitas iniciar sesión para seleccionar una asignatura');
             return;
         }
-    
+
         const currentEstado = estadoAsignaturas[asignatura.id] || 'noCursado';
         let nuevoEstado;
-    
-        // Lógica para manejar el cambio de estado
+
         if (currentEstado === 'noCursado') {
             if (creditosSeleccionados + asignatura.creditos > 30) {
                 alert("No puedes seleccionar más de 30 créditos.");
                 return;
             }
             nuevoEstado = 'enCurso';
-            setCreditosSeleccionados(prev => prev + asignatura.creditos); // Sumar créditos al empezar el curso
+            setCreditosSeleccionados(prev => prev + asignatura.creditos);
         } else if (currentEstado === 'enCurso') {
             nuevoEstado = 'aprobado';
-            setCreditosSeleccionados(prev => prev - asignatura.creditos); // restar créditos al aprobar
+            setCreditosSeleccionados(prev => prev - asignatura.creditos);
         } else if (currentEstado === 'aprobado') {
-            // Cambiar el estado a "no cursado" si ya está aprobado
             nuevoEstado = 'noCursado';
         }
-    
-        // Actualizar el estado de la asignatura
+
         setEstadoAsignaturas(prevState => ({
             ...prevState,
             [asignatura.id]: nuevoEstado,
         }));
-    
+
         console.log(`Asignatura: ${asignatura.nombre} - Estado: ${nuevoEstado}`);
-    
-        // Guardar el cambio en Neo4j
-        try {
-            await axios.put('http://localhost:8000/actualizar-asignatura/', { 
-                email: user.email,
-                asignaturaId: asignatura.id,
-                nuevoEstado: nuevoEstado 
-            });
-            console.log("Asignatura actualizada en Neo4j");
-        } catch (error) {
-            console.error("Error al actualizar asignatura en Neo4j:", error.response ? error.response.data : error.message);
-        }
     };
-    const guardarAsignaturasEnCurso = async () => {
+
+    const guardarAsignaturas = async () => {
         const asignaturasEnCurso = Object.entries(estadoAsignaturas)
             .filter(([_, estado]) => estado === 'enCurso')
             .map(([id]) => id);
 
-        console.log("Asignaturas en curso a enviar:", asignaturasEnCurso);
+        const asignaturasAprobadas = Object.entries(estadoAsignaturas)
+            .filter(([_, estado]) => estado === 'aprobado')
+            .map(([id]) => id);
+
+        const asignaturasNoCursadas = Object.entries(estadoAsignaturas)
+            .filter(([_, estado]) => estado === 'noCursado')
+            .map(([id]) => id);
+
+        console.log("Email:", user ? user.email : "No hay usuario autenticado");
+        console.log("Asignaturas en curso:", asignaturasEnCurso);
+        console.log("Asignaturas aprobadas:", asignaturasAprobadas);
+        console.log("Asignaturas no cursadas:", asignaturasNoCursadas);
 
         if (user) {
             try {
-                await axios.post('http://localhost:8000/guardar-asignaturas-en-curso/', { 
+                const dataToSend = {
                     email: user.email,
-                    asignaturas: asignaturasEnCurso 
-                });
-                console.log("Asignaturas en curso guardadas en Neo4j");
-            } catch (error) {
-                if (error.response) {
-                    console.error("Error al guardar asignaturas en curso:", error.response.data);
-                } else {
-                    console.error("Error al guardar asignaturas en curso:", error.message);
+                    asignaturas_en_curso: asignaturasEnCurso,
+                    asignaturas_aprobadas: asignaturasAprobadas,
+                };
+
+                await axios.post('http://localhost:8000/guardar-asignaturas/', dataToSend);
+                console.log("Asignaturas guardadas en Neo4j");
+
+                for (const asignaturaId of asignaturasNoCursadas) {
+                    await eliminarRelacionAsignatura(asignaturaId);
                 }
+            } catch (error) {
+                console.error("Error al guardar asignaturas:", error.response ? error.response.data : error.message);
             }
         } else {
-            console.error("No hay usuario autenticado. No se puede guardar asignaturas en curso.");
+            console.error("No hay usuario autenticado. No se puede guardar asignaturas.");
+        }
+    };
+
+    const eliminarRelacionAsignatura = async (asignaturaId) => {
+        if (!user) {
+            console.error("No hay usuario autenticado. No se puede eliminar la relación.");
+            return;
+        }
+
+        try {
+            await axios.delete(`http://localhost:8000/eliminar-relacion-asignatura/${asignaturaId}/`, {
+                data: { email: user.email }
+            });
+            console.log(`Relación de la asignatura con ID ${asignaturaId} eliminada.`);
+        } catch (error) {
+            console.error("Error al eliminar relación de asignatura:", error.response ? error.response.data : error.message);
         }
     };
 
@@ -202,7 +218,7 @@ const Simulador = () => {
                             );
                         })}
                     </div>
-                    <button className="guardar-boton" onClick={guardarAsignaturasEnCurso}>Guardar</button>
+                    <button className="guardar-boton" onClick={guardarAsignaturas}>Guardar</button>
                 </div>
             </div>
         </GoogleOAuthProvider>

@@ -6,17 +6,19 @@ carrera_list = AsignaturaViewSet.as_view({'get': 'list_carreras'})
 asignatura_list = AsignaturaViewSet.as_view({'get': 'list_asignaturas'})
 asignatura_create = AsignaturaViewSet.as_view({'post': 'create'})
 usuario_create = UsuarioViewSet.as_view({'post': 'create'})
-guardar_asignaturas_en_curso = UsuarioViewSet.as_view({'post': 'guardar_asignaturas_en_curso'})
 obtener_creditos = UsuarioViewSet.as_view({'get': 'obtener_creditos'})  
-actualizar_asignatura =  AsignaturaViewSet.as_view({'put': 'actualizar'})
+guardar_asignaturas = UsuarioViewSet.as_view({'post': 'guardar_asignaturas'})
+eliminar_relacion_asignatura = UsuarioViewSet.as_view({'delete': 'eliminar_relacion_asignatura'})
+
 
 urlpatterns = [
     path('asignaturas/', asignatura_list, name='asignatura-list'),
     path('carreras/', carrera_list, name='carrera-list'),
     path('asignaturas/create/', asignatura_create, name='asignatura-create'),
-    path('guardar-usuario/', usuario_create, name='guardar-usuario'),  # Asegúrate de que esta línea esté presente
-    path('guardar-asignaturas-en-curso/', guardar_asignaturas_en_curso, name='guardar-asignaturas-en-curso'),
-    path('obtener-creditos/', obtener_creditos, name='obtener-creditos'),
-    path('actualizar-asignatura/', actualizar_asignatura, name='actualizar-asignatura'),
+    path('guardar-usuario/', usuario_create, name='guardar-usuario'),  
+    path('obtener-creditos/<str:id_asignatura>/', obtener_creditos, name='obtener-creditos'), 
+    path('guardar-asignaturas/', guardar_asignaturas, name='guardar-asignaturas'),
+    path('eliminar-relacion-asignatura/<str:id_asignatura>/', eliminar_relacion_asignatura, name='eliminar-relacion-asignatura'),
+
 
 ]
