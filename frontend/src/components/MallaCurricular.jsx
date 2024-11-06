@@ -6,9 +6,12 @@ import Login from './Login';
 
 const MallaCurricular = () => {
   const [asignaturas, setAsignaturas] = useState({});
+  const [selectedAsignatura, setSelectedAsignatura] = useState(null);
   const [carreras, setCarreras] = useState([]);
   const [selectedCarrera, setSelectedCarrera] = useState('');
   const [hoveredAsignatura, setHoveredAsignatura] = useState(null);
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [notMenu, setNotMenu] = useState(false);
 
   useEffect(() => {
     const fetchCarreras = async () => {
@@ -29,6 +32,7 @@ const MallaCurricular = () => {
     const carreraId = e.target.value;
     setSelectedCarrera(carreraId);
 
+    // Fetch asignaturas para la carrera seleccionada
     if (carreraId) {
       try {
         const response = await axios.get(`http://localhost:8000/asignaturas/?carreraId=${carreraId}`);
@@ -37,8 +41,18 @@ const MallaCurricular = () => {
         console.error('Error fetching asignaturas:', error);
       }
     } else {
-      setAsignaturas({});
+      setAsignaturas({}); // Resetear asignaturas si no hay carrera seleccionada
     }
+  };
+
+  const handleAsignaturaClick = (asignatura) => {
+    setSelectedAsignatura(asignatura);
+    setIsMenuVisible(true);
+  };
+
+  const handleCloseMenu = () => {
+    setIsMenuVisible(false);
+    setSelectedAsignatura(null);
   };
 
   const handleMouseEnter = (asignatura) => {
@@ -49,24 +63,33 @@ const MallaCurricular = () => {
     setHoveredAsignatura(null);
   };
 
+  const toggleNotMenu = () => {
+    setNotMenu(!notMenu);
+    handleCloseMenu();
+  };
+
   const getBackgroundStyle = (asignatura) => {
     if (
       hoveredAsignatura &&
       hoveredAsignatura.prerrequisitos.some(
         (prerrequisito) => prerrequisito.id === asignatura.id
       )
-    ) 
+    ) {
+      return { backgroundColor: 'lightblue' };
+    }
     if (
       hoveredAsignatura &&
       hoveredAsignatura.postrequisitos.some(
         (postrequisito) => postrequisito.id === asignatura.id
       )
-    ) 
+    ) {
+      return { backgroundColor: 'orange' };
+    }
     return {};
   };
 
   return (
-    <div>
+    <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>
       <div className='header'>
         <Login />
         <h1>Malla Interactiva</h1>
@@ -75,6 +98,20 @@ const MallaCurricular = () => {
             <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
           ))}
         </select>
+        
+        <div className="form-check form-switch">
+          <input 
+            className="form-check-input" 
+            type="checkbox" 
+            role="switch" 
+            id="flexSwitchCheckDefault" 
+            checked={notMenu} 
+            onChange={toggleNotMenu} 
+          />
+          <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+            {notMenu ? "Desactivar Menú" : "Activar Menú"}
+          </label>
+        </div>
       </div>
 
       <div className='malla-curricular'>
@@ -93,6 +130,7 @@ const MallaCurricular = () => {
                       {practicas.map(practica => (
                         <div className='ulPracticas'
                           key={practica.id}
+                          onClick={notMenu ? () => handleAsignaturaClick(practica) : () => {}}
                           onMouseEnter={() => handleMouseEnter(practica)}
                           onMouseLeave={handleMouseLeave}
                           style={getBackgroundStyle(practica)}>
@@ -109,6 +147,7 @@ const MallaCurricular = () => {
                       <div
                         key={asignatura.id}
                         className="cuadro ilAsignaturas"
+                        onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => {}}
                         onMouseEnter={() => handleMouseEnter(asignatura)}
                         onMouseLeave={handleMouseLeave}
                         style={getBackgroundStyle(asignatura)}
@@ -121,6 +160,28 @@ const MallaCurricular = () => {
               </div>
             );
           })}
+        </div>
+
+        <div className={`sidebar ${isMenuVisible ? 'visible' : ''}`}>
+          <button className="close-btn" onClick={handleCloseMenu}>X</button>
+          <h2>{selectedAsignatura?.nombre} ({selectedAsignatura?.creditos} créditos)</h2>
+          <p><strong>Descripción:</strong> {selectedAsignatura?.descripcion}</p>
+          <p><strong>Prerrequisitos:</strong></p>
+          <ul>
+            {selectedAsignatura?.prerrequisitos?.map(prer => (
+              <li key={prer.id}>
+                {prer.nombre} ({prer.creditos} créditos)
+              </li>
+            ))}
+          </ul>
+          <p><strong>Postrequisitos:</strong></p>
+          <ul>
+            {selectedAsignatura?.postrequisitos?.map(post => (
+              <li key={post.id}>
+                {post.nombre} ({post.creditos} créditos)
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
