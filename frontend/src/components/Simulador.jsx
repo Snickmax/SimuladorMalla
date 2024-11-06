@@ -141,7 +141,25 @@ const Simulador = () => {
             console.error("No hay usuario autenticado. No se puede guardar asignaturas.");
         }
     };
-    
+
+    const getBackgroundStyle = (asignatura) => {
+        const currentEstado = estadoAsignaturas[asignatura.id] || 'noCursado'
+        if (currentEstado === 'noCursado') {
+            return{
+                backgroundColor: 'white'
+            }
+
+        } else if (currentEstado === 'enCurso') {
+            return{
+                backgroundColor: 'orange'
+            }
+        } else if (currentEstado === 'aprobado') {
+            return{
+                backgroundColor: 'green'
+            }
+        }
+        return {backgroundColor:"white"};
+      };
     
 
     return (
@@ -182,7 +200,7 @@ const Simulador = () => {
                                                     <div className='ulPracticas'
                                                         key={practica.id}
                                                         onClick={() => handleAsignaturaClick(practica)}
-                                                    >
+                                                        style={getBackgroundStyle(practica)}>
                                                         <div className='ilPracticas'>
                                                             {practica.nombre}
                                                         </div>
@@ -196,6 +214,7 @@ const Simulador = () => {
                                                     key={asignatura.id}
                                                     className="cuadro ilAsignaturas"
                                                     onClick={() => handleAsignaturaClick(asignatura)}
+                                                    style={getBackgroundStyle(asignatura)}
                                                 >
                                                     {asignatura.nombre}
                                                 </div>
