@@ -161,20 +161,17 @@ class UsuarioViewSet(viewsets.ViewSet):
         return Response({"message": "Asignaturas guardadas y relaciones eliminadas exitosamente"}, status=status.HTTP_200_OK)
 
     
-    def obtener_creditos_asignatura(self, request, id_asignatura):
-        conn = Neo4jConnection()
+        
+    def obtener_estados(self, userId):
+        conn= Neo4jConnection()
         with conn.driver.session() as session:
             result = session.run(
                 """
-                MATCH (a:Asignatura {id: $id_asignatura})
-                RETURN a.creditos AS creditos
+                MATCH p=(:Usuario {email: $userId })-[r:CURSA]->(:Asignatura) 
+                RETURN p
                 """,
-                id_asignatura=id_asignatura
+                userId=userId
+                
             ).single()
-
-        conn.close()
-
-        if result:
-            return Response({"creditos": result["creditos"]}, status=status.HTTP_200_OK)
-        else:
-            return Response({"error": "Asignatura no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+            
+        

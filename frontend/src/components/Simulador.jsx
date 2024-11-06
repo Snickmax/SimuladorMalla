@@ -28,26 +28,6 @@ const Simulador = () => {
         fetchCarreras();
     }, []);
 
-    useEffect(() => {
-        const fetchCreditos = async () => {
-            if (selectedCarrera) {
-                try {
-                    const response = await axios.get(`http://localhost:8000/creditos-asignaturas/?carreraId=${selectedCarrera}`);
-                    const asignaturasConCreditos = response.data;
-                    setAsignaturas(prev => {
-                        return asignaturasConCreditos.reduce((acc, asignatura) => {
-                            acc[asignatura.id] = asignatura;
-                            return acc;
-                        }, {});
-                    });
-                } catch (error) {
-                    console.error("Error al obtener créditos:", error);
-                }
-            }
-        };
-
-        fetchCreditos();
-    }, [selectedCarrera]);
 
     const handleCarreraChange = async (e) => {
         const carreraId = e.target.value;
