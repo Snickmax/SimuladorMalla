@@ -111,6 +111,14 @@
     /* Color del texto */
 }
 
+.ilAsignaturas:hover,
+.ulPracticas:hover,
+.ulPracticas:hover .ilPracticas {
+    background-color: #333;
+    /* Cambiar color de fondo al pasar el ratón */
+    color: #fff;
+    /* Cambiar color de texto para mayor contraste */
+}
 
 
 .cuadro {
@@ -143,5 +151,3 @@ ul {
 ul li {
     margin-bottom: 10px;
 }
-
-
