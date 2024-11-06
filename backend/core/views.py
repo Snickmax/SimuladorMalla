@@ -106,9 +106,10 @@ class UsuarioViewSet(viewsets.ViewSet):
         email = request.data.get('email')
         asignaturas_en_curso = request.data.get('asignaturas_en_curso', [])
         asignaturas_aprobadas = request.data.get('asignaturas_aprobadas', [])
+        asignaturas_a_eliminar = request.data.get('asignaturas_a_eliminar', [])
 
-        if not email or not (asignaturas_en_curso or asignaturas_aprobadas):
-            return Response({"error": "Los campos 'email', 'asignaturas_en_curso' y 'asignaturas_aprobadas' son obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
+        if not email:
+            return Response({"error": "El campo 'email' es obligatorio"}, status=status.HTTP_400_BAD_REQUEST)
 
         conn = Neo4jConnection()
         with conn.driver.session() as session:
@@ -126,7 +127,6 @@ class UsuarioViewSet(viewsets.ViewSet):
 
             # Guardar asignaturas aprobadas
             for asignatura_id in asignaturas_aprobadas:
-                # Primero eliminar cualquier relación en curso
                 session.run(
                     """
                     MATCH (u:Usuario {email: $email})-[r:CURSA {estado: 'enCurso'}]->(a:Asignatura {id: $asignatura_id})
@@ -135,8 +135,6 @@ class UsuarioViewSet(viewsets.ViewSet):
                     email=email,
                     asignatura_id=asignatura_id
                 )
-                
-                # Luego crear la relación con el estado aprobado
                 session.run(
                     """
                     MATCH (u:Usuario {email: $email}), (a:Asignatura {id: $asignatura_id})
@@ -147,29 +145,21 @@ class UsuarioViewSet(viewsets.ViewSet):
                     asignatura_id=asignatura_id
                 )
 
-        conn.close()
-        return Response({"message": "Asignaturas guardadas exitosamente"}, status=status.HTTP_200_OK)
-    
-    def eliminar_relacion_asignatura(self, request, id_asignatura=None):
-        email = request.data.get('email')
-
-        if not email or not id_asignatura:
-            return Response({"error": "Los campos 'email' y 'id_asignatura' son obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
-
-        conn = Neo4jConnection()
-        with conn.driver.session() as session:
-            session.run(
-                """
-                MATCH (u:Usuario {email: $email})-[r:CURSA]->(a:Asignatura {id: $asignatura_id})
-                DELETE r
-                """,
-                email=email,
-                asignatura_id=id_asignatura
-            )
+            # Eliminar asignaturas no cursadas
+            if asignaturas_a_eliminar:
+                session.run(
+                    """
+                    MATCH (u:Usuario {email: $email})-[r:CURSA]->(a:Asignatura)
+                    WHERE a.id IN $asignaturas_a_eliminar
+                    DELETE r
+                    """,
+                    email=email,
+                    asignaturas_a_eliminar=asignaturas_a_eliminar
+                )
 
         conn.close()
-        return Response({"message": "Asignatura eliminada exitosamente"}, status=status.HTTP_200_OK)
-    
+        return Response({"message": "Asignaturas guardadas y relaciones eliminadas exitosamente"}, status=status.HTTP_200_OK)
+
     
     def obtener_creditos_asignatura(self, request, id_asignatura):
         conn = Neo4jConnection()

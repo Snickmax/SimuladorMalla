@@ -101,60 +101,48 @@ const Simulador = () => {
     };
 
     const guardarAsignaturas = async () => {
+        // Obtener las asignaturas según su estado
         const asignaturasEnCurso = Object.entries(estadoAsignaturas)
             .filter(([_, estado]) => estado === 'enCurso')
             .map(([id]) => id);
-
+    
         const asignaturasAprobadas = Object.entries(estadoAsignaturas)
             .filter(([_, estado]) => estado === 'aprobado')
             .map(([id]) => id);
-
+    
         const asignaturasNoCursadas = Object.entries(estadoAsignaturas)
             .filter(([_, estado]) => estado === 'noCursado')
             .map(([id]) => id);
-
-        console.log("Email:", user ? user.email : "No hay usuario autenticado");
-        console.log("Asignaturas en curso:", asignaturasEnCurso);
-        console.log("Asignaturas aprobadas:", asignaturasAprobadas);
-        console.log("Asignaturas no cursadas:", asignaturasNoCursadas);
-
+    
+        // Verificar si el usuario está autenticado y tiene un email válido
         if (user) {
+            console.log("Email:", user.email);
+            console.log("Asignaturas en curso:", asignaturasEnCurso);
+            console.log("Asignaturas aprobadas:", asignaturasAprobadas);
+            console.log("Asignaturas no cursadas:", asignaturasNoCursadas);
+    
             try {
+                // Crear el objeto con todos los datos
                 const dataToSend = {
                     email: user.email,
                     asignaturas_en_curso: asignaturasEnCurso,
                     asignaturas_aprobadas: asignaturasAprobadas,
+                    asignaturas_a_eliminar: asignaturasNoCursadas
                 };
-
+    
+                // Realizar la solicitud POST al backend para guardar y eliminar asignaturas
                 await axios.post('http://localhost:8000/guardar-asignaturas/', dataToSend);
-                console.log("Asignaturas guardadas en Neo4j");
-
-                for (const asignaturaId of asignaturasNoCursadas) {
-                    await eliminarRelacionAsignatura(asignaturaId);
-                }
+                console.log("Asignaturas guardadas y relaciones eliminadas en Neo4j");
+    
             } catch (error) {
-                console.error("Error al guardar asignaturas:", error.response ? error.response.data : error.message);
+                console.error("Error al guardar o eliminar asignaturas:", error.response ? error.response.data : error.message);
             }
         } else {
             console.error("No hay usuario autenticado. No se puede guardar asignaturas.");
         }
     };
-
-    const eliminarRelacionAsignatura = async (asignaturaId) => {
-        if (!user) {
-            console.error("No hay usuario autenticado. No se puede eliminar la relación.");
-            return;
-        }
-
-        try {
-            await axios.delete(`http://localhost:8000/eliminar-relacion-asignatura/${asignaturaId}/`, {
-                data: { email: user.email }
-            });
-            console.log(`Relación de la asignatura con ID ${asignaturaId} eliminada.`);
-        } catch (error) {
-            console.error("Error al eliminar relación de asignatura:", error.response ? error.response.data : error.message);
-        }
-    };
+    
+    
 
     return (
         <GoogleOAuthProvider clientId="1092419716281-mregl22qvg3k1qtgmcgg2ecaem5j2ckq.apps.googleusercontent.com">

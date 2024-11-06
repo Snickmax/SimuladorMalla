@@ -18,7 +18,6 @@ urlpatterns = [
     path('guardar-usuario/', usuario_create, name='guardar-usuario'),  
     path('obtener-creditos/<str:id_asignatura>/', obtener_creditos, name='obtener-creditos'), 
     path('guardar-asignaturas/', guardar_asignaturas, name='guardar-asignaturas'),
-    path('eliminar-relacion-asignatura/<str:id_asignatura>/', eliminar_relacion_asignatura, name='eliminar-relacion-asignatura'),
 
 
 ]
