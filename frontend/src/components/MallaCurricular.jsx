@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './MallaCurricular.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Login from './Login';
 
 const MallaCurricular = () => {
   const [asignaturas, setAsignaturas] = useState({});
@@ -91,7 +90,6 @@ const MallaCurricular = () => {
   return (
     <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>
       <div className='header'>
-        <Login />
         <h1>Malla Interactiva</h1>
         <select value={selectedCarrera} onChange={handleCarreraChange}>
           {carreras.map((carrera) => (

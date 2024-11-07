@@ -5,12 +5,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Login from './Login';
 
-const Simulador = () => {
+function Simulador ({user}){
     const [asignaturas, setAsignaturas] = useState({});
     const [carreras, setCarreras] = useState([]);
     const [selectedCarrera, setSelectedCarrera] = useState('');
     const [estadoAsignaturas, setEstadoAsignaturas] = useState({});
-    const [user, setUser] = useState(null);
     const [creditosSeleccionados, setCreditosSeleccionados] = useState(0);
 
     useEffect(() => {
@@ -147,21 +146,13 @@ const Simulador = () => {
             <div>
                 <div className='header'>
                     <h1>Simulador de Avance</h1>
-                    <Login setUser={setUser} />
                     <select value={selectedCarrera} onChange={handleCarreraChange}>
                         {carreras.map((carrera) => (
                             <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
                         ))}
                     </select>
                 </div>
-
-                {user && (
-                    <div className="user-info">
-                        <img src={user.picture} alt="User" className="user-image" />
-                        <h4>{user.name}</h4>
-                        <p>Créditos seleccionados: {creditosSeleccionados}</p>
-                    </div>
-                )}
+                <p>Créditos seleccionados: {creditosSeleccionados}</p>
 
                 <div className='simulador'>
                     <div className="simulador-container">
@@ -177,22 +168,22 @@ const Simulador = () => {
                                         {practicas.length > 0 && (
                                             <div className="practica-columna">
                                                 {practicas.map(practica => (
-                                                    <div className='ulPracticas'
+                                                    <div className='ulPractica'
                                                         key={practica.id}
                                                         onClick={() => handleAsignaturaClick(practica)}
                                                         style={getBackgroundStyle(practica)}>
-                                                        <div className='ilPracticas'>
+                                                        <div className='ilPractica'>
                                                             {practica.nombre}
                                                         </div>
                                                     </div>
                                                 ))}
                                             </div>
                                         )}
-                                        <div className='ulAsignaturas'>
+                                        <div className='ulAsignatura'>
                                             {asignaturasSinPracticas.map(asignatura => (
                                                 <div
                                                     key={asignatura.id}
-                                                    className="cuadro ilAsignaturas"
+                                                    className="cuadro ilAsignatura"
                                                     onClick={() => handleAsignaturaClick(asignatura)}
                                                     style={getBackgroundStyle(asignatura)}
                                                 >

@@ -1,6 +1,7 @@
 // App.js
 import React, { useState } from 'react';
 import Simulador from './components/Simulador';
+import MallaCurricular from './components/MallaCurricular';
 import Login from './components/Login';
 
 function App() {
@@ -8,8 +9,8 @@ function App() {
 
   return (
     <div className="App">
-      <Login user={user} setUser={setUser} /> 
-      <Simulador user={user} />
+      <Login user={user} setUser={setUser}/> 
+      {user ? <Simulador user={user}/>: <MallaCurricular/>}
     </div>
   );
 }

@@ -1,11 +1,13 @@
 // Login.js
 import { useEffect } from 'react';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 
 function Login({ user, setUser }) {
     function handleCallbackResponse(response) {
         const userObject = jwtDecode(response.credential);
+        console.log(userObject)
+        console.log(user)
         setUser(userObject);
         document.getElementById("signInDiv").hidden = true;
 
@@ -43,14 +45,18 @@ function Login({ user, setUser }) {
     return (
         <div>
             <div id="signInDiv"></div>
-            {user && (
-                <div>
-                    <button onClick={handleSignOut}>Cerrar Sesion</button>
-                    <img src={user.picture} alt="User" />
-                    <h3>{user.name}</h3>
-                </div>
-            )}
-        </div>
+
+            {
+                user && (
+                    <div className="user-info">
+
+                        <button onClick={handleSignOut}>Cerrar Sesion</button>
+                        <img src={user.picture} alt="User" />
+                        <h3>{user.name}</h3>
+                    </div>
+                )
+            }
+        </div >
     );
 }
 
