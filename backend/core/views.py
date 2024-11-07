@@ -14,7 +14,6 @@ class AsignaturaViewSet(viewsets.ViewSet):
         conn.close()
         return Response(carreras)
 
-    
     def list_asignaturas(self, request):
         carrera_id = request.query_params.get('carreraId')
         
@@ -29,7 +28,7 @@ class AsignaturaViewSet(viewsets.ViewSet):
                 RETURN a.id AS id, a.descripcion AS descripcion, a.nombre AS nombre, a.creditos AS creditos, 
                     p.semestre AS semestre, prerrequisitos, postrequisitos
                 ORDER BY p.semestre
-            """, carrera_id=carrera_id) 
+            """, carrera_id=carrera_id)
 
             asignaturas_por_semestre = {}
             for record in result:
@@ -51,7 +50,6 @@ class AsignaturaViewSet(viewsets.ViewSet):
     
         return Response(asignaturas_por_semestre)
 
-
     def create(self, request):
         nombre = request.data.get('nombre')
         creditos = request.data.get('creditos')
@@ -71,9 +69,8 @@ class AsignaturaViewSet(viewsets.ViewSet):
         conn.close()
 
         return Response({"message": "Nodo de asignatura creado exitosamente"}, status=status.HTTP_201_CREATED)
-    
+        
 class UsuarioViewSet(viewsets.ViewSet):
-
     def create(self, request):
         email = request.data.get('email')
 
@@ -104,3 +101,77 @@ class UsuarioViewSet(viewsets.ViewSet):
 
         conn.close()
         return Response({"message": "Usuario creado exitosamente"}, status=status.HTTP_201_CREATED)
+
+    def guardar_asignaturas(self, request):
+        email = request.data.get('email')
+        asignaturas_en_curso = request.data.get('asignaturas_en_curso', [])
+        asignaturas_aprobadas = request.data.get('asignaturas_aprobadas', [])
+        asignaturas_a_eliminar = request.data.get('asignaturas_a_eliminar', [])
+
+        if not email:
+            return Response({"error": "El campo 'email' es obligatorio"}, status=status.HTTP_400_BAD_REQUEST)
+
+        conn = Neo4jConnection()
+        with conn.driver.session() as session:
+            # Guardar asignaturas en curso
+            for asignatura_id in asignaturas_en_curso:
+                session.run(
+                    """
+                    MATCH (u:Usuario {email: $email}), (a:Asignatura {id: $asignatura_id})
+                    MERGE (u)-[r:CURSA]->(a)
+                    SET r.estado = 'enCurso'
+                    """,
+                    email=email,
+                    asignatura_id=asignatura_id
+                )
+
+            # Guardar asignaturas aprobadas
+            for asignatura_id in asignaturas_aprobadas:
+                session.run(
+                    """
+                    MATCH (u:Usuario {email: $email})-[r:CURSA {estado: 'enCurso'}]->(a:Asignatura {id: $asignatura_id})
+                    DELETE r
+                    """,
+                    email=email,
+                    asignatura_id=asignatura_id
+                )
+                session.run(
+                    """
+                    MATCH (u:Usuario {email: $email}), (a:Asignatura {id: $asignatura_id})
+                    MERGE (u)-[r:CURSA]->(a)
+                    SET r.estado = 'aprobado'
+                    """,
+                    email=email,
+                    asignatura_id=asignatura_id
+                )
+
+            # Eliminar asignaturas no cursadas
+            if asignaturas_a_eliminar:
+                session.run(
+                    """
+                    MATCH (u:Usuario {email: $email})-[r:CURSA]->(a:Asignatura)
+                    WHERE a.id IN $asignaturas_a_eliminar
+                    DELETE r
+                    """,
+                    email=email,
+                    asignaturas_a_eliminar=asignaturas_a_eliminar
+                )
+
+        conn.close()
+        return Response({"message": "Asignaturas guardadas y relaciones eliminadas exitosamente"}, status=status.HTTP_200_OK)
+
+    
+        
+    def obtener_estados(self, userId):
+        conn= Neo4jConnection()
+        with conn.driver.session() as session:
+            result = session.run(
+                """
+                MATCH p=(:Usuario {email: $userId })-[r:CURSA]->(:Asignatura) 
+                RETURN p
+                """,
+                userId=userId
+                
+            ).single()
+            
+        
