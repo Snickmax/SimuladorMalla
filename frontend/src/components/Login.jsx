@@ -6,9 +6,11 @@ import axios from 'axios';
 function Login({ user, setUser }) {
     function handleCallbackResponse(response) {
         const userObject = jwtDecode(response.credential);
-        console.log(userObject)
-        console.log(user)
         setUser(userObject);
+
+        // Guardar usuario en localStorage
+        localStorage.setItem('user', JSON.stringify(userObject));
+
         document.getElementById("signInDiv").hidden = true;
 
         const email = userObject.email;
@@ -27,10 +29,18 @@ function Login({ user, setUser }) {
 
     function handleSignOut() {
         setUser(null);
+        localStorage.removeItem('user'); // Eliminar usuario de localStorage
         document.getElementById("signInDiv").hidden = false;
     }
 
     useEffect(() => {
+        // Verificar si el usuario ya está en localStorage
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser) {
+            setUser(storedUser); // Restaurar el usuario de localStorage
+            document.getElementById("signInDiv").hidden = true;
+        }
+
         window.google.accounts.id.initialize({
             client_id: "1092419716281-mregl22qvg3k1qtgmcgg2ecaem5j2ckq.apps.googleusercontent.com",
             callback: handleCallbackResponse

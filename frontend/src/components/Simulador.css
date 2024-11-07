@@ -10,13 +10,13 @@
     /* Usar flexbox para las columnas */
 }
 
-.ulAsignaturas {
+.ulAsignatura {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
 }
 
-.ulPracticas {
+.ulPractica {
     padding: 0px;
     height: 100%;
     display: flex;
@@ -24,7 +24,7 @@
     justify-content: center;
 }
 
-.ilPracticas {
+.ilPractica {
     text-align: center;
     display: flex;
     width: 100%;
@@ -33,7 +33,7 @@
     white-space: nowrap;
 }
 
-.ilAsignaturas {
+.ilAsignatura {
     text-align: center;
     padding: 5px;
     color: #555;
@@ -41,7 +41,11 @@
 
 /* Ajustes de interacción y simulación */
 .cuadro:hover {
-    background-color: #e0e7ff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.ulPractica:hover {
     cursor: pointer;
     transition: background-color 0.2s;
 }

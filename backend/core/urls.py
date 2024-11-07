@@ -14,7 +14,10 @@ obtener_estados = UsuarioViewSet.as_view({'get': 'obtener_estados'})
 urlpatterns = [
     path('asignaturas/', asignatura_list, name='asignatura-list'),
     path('carreras/', carrera_list, name='carrera-list'),
-    path('asignaturas/create/', asignatura_create, name='asignatura-create'),
     path('guardar-usuario/', usuario_create, name='guardar-usuario'),  
     path('guardar-asignaturas/', guardar_asignaturas, name='guardar-asignaturas'),
+    path('obtener-estados/', obtener_estados, name='obtener-estados'),
+    
+    
+    path('asignaturas/create/', asignatura_create, name='asignatura-create'),
 ]
