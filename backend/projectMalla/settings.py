@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
+from dotenv import load_dotenv
 from pathlib import Path
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,8 +28,7 @@ SECRET_KEY = 'django-insecure-#j)7znd@5!)vrce0lkd01gdhbp=6bjc^=vuv%7*tv1#m-x1=03
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.0.9']
 
 # Application definition
 
@@ -77,10 +79,12 @@ WSGI_APPLICATION = 'projectMalla.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
+
+NEO4J_DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'HOST': os.getenv('NEO4J_URI'),
+        'USER': os.getenv('NEO4J_USERNAME'),
+        'PASSWORD': os.getenv('NEO4J_PASSWORD')  # Default por si no se define la variable
     }
 }
 
@@ -127,8 +131,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Ajusta según tu frontend
+    "http://localhost:5173",
+    "http://192.168.0.9:5173",  # Dirección IP de tu PC con el puerto de Vite
 ]
+
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
