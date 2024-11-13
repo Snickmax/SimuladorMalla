@@ -1,11 +1,117 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './CrearMalla.css';
 
 const CrearMalla = () => {
+    const [carreras, setCarreras] = useState([]);
+    const [asignaturas, setAsignaturas] = useState({});
     const [semestres, setSemestres] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [editandoAsignatura, setEditandoAsignatura] = useState(null);
+
+    // Llamamos a la función que carga las carreras y asignaturas al cargar el componente
+    useEffect(() => {
+        fetchCarreras();
+    }, []);
+
+    const fetchCarreras = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/carreras/');
+            const carrerasData = response.data;
+            setCarreras(carrerasData);
+
+            if (carrerasData.length > 0) {
+                // Obtener las asignaturas de la primera carrera
+                fetchAsignaturas(carrerasData[0].id);
+            }
+        } catch (error) {
+            console.error('Error fetching carreras:', error);
+        }
+    };
     
+
+const fetchAsignaturas = async (carreraId) => {
+    try {
+        const response = await axios.get(`http://localhost:8000/asignaturas/?carreraId=${carreraId}`);
+        const data = response.data;
+
+        // Mapeo para las categorías
+        const categoriasMap = {};
+
+        // Convertir los semestres y asignaturas en un formato adecuado
+        const formattedSemestres = Object.entries(data).map(([semestre, asignaturas]) => ({
+            id: Number(semestre),
+            asignaturas: asignaturas.map(asignatura => {
+                // Manejo de categorías sin duplicados
+                if (!categoriasMap[asignatura.categoriaId]) {
+                    categoriasMap[asignatura.categoriaId] = {
+                        id: asignatura.categoriaId,
+                        nombre: asignatura.categoriaNombre
+                    };
+                }
+
+                // Manejo de prerrequisitos
+                let tienePrerrequisito = false;
+                let prerrequisitoId = null;
+                let semestrePrerrequisito = null;
+
+                if (asignatura.prerrequisitos && asignatura.prerrequisitos.length > 0) {
+                    tienePrerrequisito = true;
+
+                    if (asignatura.prerrequisitos.length === 1) {
+                        // Si hay solo un prerrequisito, obtener el id de ese prerrequisito
+                        prerrequisitoId = asignatura.prerrequisitos[0].id;
+                    } else {
+                        // Si hay más de uno, buscar el semestre en el que está el primer prerrequisito
+                        for (let semestreKey in data) {
+                            const semestreData = data[semestreKey];
+                            const prereq = asignatura.prerrequisitos[0];  // Tomamos el primer prerrequisito
+                            
+                            // Buscar si el primer prerrequisito existe en el semestre actual
+                            const found = semestreData.some(asig => asig.id === prereq.id);
+                            
+                            if (found) {
+                                semestrePrerrequisito = Number(semestreKey);  // Asignar el semestre donde se encuentra
+                                prerrequisitoId = semestrePrerrequisito
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                return {
+                    id: asignatura.id,
+                    nombre: asignatura.nombre,
+                    creditos: asignatura.creditos,
+                    descripcion: asignatura.descripcion,
+                    categoriaId: asignatura.categoriaId,
+                    categoriaNombre: asignatura.categoriaNombre,
+                    tienePrerrequisito: tienePrerrequisito,
+                    prerrequisito: prerrequisitoId,
+                };
+            }),
+            nuevaAsignatura: crearNuevaAsignatura() // Asumo que esta función es parte de tu código
+        }));
+
+        const categoriasArray = Object.values(categoriasMap);
+
+        // Establecer el estado de los semestres y categorías
+        setSemestres(formattedSemestres);
+        setCategorias(categoriasArray);
+
+    } catch (error) {
+        console.error('Error fetching asignaturas:', error);
+    }
+};
+
+    
+
+
+    const handleCarreraChange = async (event) => {
+        const carreraId = event.target.value;
+        fetchAsignaturas(carreraId);
+    };
+
     const crearNuevaAsignatura = () => ({
         id: '',
         nombre: '',
@@ -241,10 +347,18 @@ const CrearMalla = () => {
     return (
         <div className="crear-malla-container">
             <h1>Crear Malla Académica</h1>
+            <label htmlFor="carrera-select">Seleccione una carrera:</label>
+            <select id="carrera-select" onChange={handleCarreraChange}>
+                {carreras.map((carrera) => (
+                    <option key={carrera.id} value={carrera.id}>
+                        {carrera.nombre}
+                    </option>
+                ))}
+            </select>
             <button onClick={agregarSemestre} className="agregar-semestre-btn">+ Agregar Semestre</button>
             <div className="semestres-row">
                 {semestres.map(semestre => (
-                    <div key={semestre.id} className="semestre-columna">
+                    <div key={semestre.id} className="semestre-column">
                         <h3>Semestre {semestre.id}</h3>
                         <button onClick={() => eliminarSemestre(semestre.id)} className="eliminar-semestre-btn">X</button>
                         <div className="asignaturas-container">

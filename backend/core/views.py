@@ -26,7 +26,7 @@ class AsignaturaViewSet(viewsets.ViewSet):
                 OPTIONAL MATCH (a)-[:REQUISITO {tipo:"Postrequisito"}]->(po:Asignatura)
                 WITH a, p, collect(DISTINCT pr) AS prerrequisitos, collect(DISTINCT po) AS postrequisitos
                 RETURN a.id AS id, a.descripcion AS descripcion, a.nombre AS nombre, a.creditos AS creditos, 
-                    p.semestre AS semestre, prerrequisitos, postrequisitos
+                    p.semestre AS semestre, a.categoriaId AS categoriaId, a.categoriaNombre AS categoriaNombre, prerrequisitos, postrequisitos
                 ORDER BY p.semestre
             """, carrera_id=carrera_id)
 
@@ -38,6 +38,8 @@ class AsignaturaViewSet(viewsets.ViewSet):
                     "nombre": record["nombre"],
                     "creditos": record["creditos"],
                     "descripcion": record["descripcion"],
+                    "categoriaId": record["categoriaId"],
+                    "categoriaNombre": record["categoriaNombre"],
                     "prerrequisitos": [{"id": pr["id"], "nombre": pr["nombre"], "creditos": pr["creditos"]} for pr in record["prerrequisitos"]],
                     "postrequisitos": [{"id": po["id"], "nombre": po["nombre"], "creditos": po["creditos"]} for po in record["postrequisitos"]],
                 }
