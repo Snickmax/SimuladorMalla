@@ -3,16 +3,55 @@ import './CrearMalla.css';
 
 const CrearMalla = () => {
     const [semestres, setSemestres] = useState([]);
+    const [categorias, setCategorias] = useState([]);
     const [editandoAsignatura, setEditandoAsignatura] = useState(null);
-
+    
     const crearNuevaAsignatura = () => ({
         id: '',
         nombre: '',
         creditos: '',
         descripcion: '',
+        categoriaId: '',
+        categoriaNombre: '',
         tienePrerrequisito: false,
         prerrequisito: '',
     });
+
+    const agregarCategoria = () => {
+        if (categorias.length < 4) {
+            const nuevaCategoria = {
+                id: `Categoria${categorias.length + 1}`,
+                nombre: `Nombre de Categoria ${categorias.length + 1}`
+            };
+            setCategorias([...categorias, nuevaCategoria]);
+        } else {
+            alert('No se pueden agregar más de 4 categorías.');
+        }
+    };
+
+    const eliminarCategoria = (categoriaId) => {
+        if (categorias[categorias.length - 1].id !== categoriaId) {
+            alert("Solo puedes eliminar la última categoría.");
+            return;
+        }
+
+        const esCategoriaAsignada = semestres.some((sem) =>
+            sem.asignaturas.some((asig) => asig.categoriaId === categoriaId)
+        );
+
+        if (esCategoriaAsignada) {
+            alert(`No se puede eliminar la categoría "${categoriaId}" porque está asignada a una asignatura.`);
+            return;
+        }
+
+        setCategorias(categorias.filter(cat => cat.id !== categoriaId));
+    };
+
+    const modificarCategoriaNombre = (categoriaId, nuevoNombre) => {
+        setCategorias(categorias.map(cat =>
+            cat.id === categoriaId ? { ...cat, nombre: nuevoNombre } : cat
+        ));
+    };
 
     const agregarSemestre = () => {
         setSemestres([...semestres, { id: semestres.length + 1, asignaturas: [], nuevaAsignatura: crearNuevaAsignatura() }]);
@@ -60,11 +99,11 @@ const CrearMalla = () => {
 
     const agregarAsignatura = (semestreId) => {
         const semestre = semestres.find(s => s.id === semestreId);
-        const { id, nombre, creditos, descripcion, tienePrerrequisito, prerrequisito } = semestre.nuevaAsignatura;
+        const { id, nombre, creditos, descripcion, categoriaId, categoriaNombre, tienePrerrequisito, prerrequisito } = semestre.nuevaAsignatura;
 
         // Validación de campos obligatorios
-        if (!id || !nombre || !creditos || !descripcion) {
-            alert('Los campos ID, Nombre, Créditos y Descripción son obligatorios.');
+        if (!id || !nombre || !creditos || !descripcion || !categoriaId || !categoriaNombre) {
+            alert('Los campos ID, Nombre, Créditos, Descripción y Categoria son obligatorios.');
             return;
         }
 
@@ -178,6 +217,27 @@ const CrearMalla = () => {
         setEditandoAsignatura(null);
     };
 
+    // Función para manejar el cambio de categoría y guardar ID y nombre
+    const handleCategoriaChange = (e, semestreId) => {
+        const categoriaId = e.target.value;
+        // Obtener el nombre de la categoría seleccionada
+        const categoriaNombre = categorias.find(cat => cat.id === categoriaId)?.nombre || '';
+
+        setSemestres(semestres.map(semestre => {
+            if (semestre.id === semestreId) {
+                return {
+                    ...semestre,
+                    nuevaAsignatura: {
+                        ...semestre.nuevaAsignatura,
+                        categoriaId,
+                        categoriaNombre, // Guardar el nombre de la categoría en la asignatura
+                    },
+                };
+            }
+            return semestre;
+        }));
+    };
+
     return (
         <div className="crear-malla-container">
             <h1>Crear Malla Académica</h1>
@@ -260,6 +320,24 @@ const CrearMalla = () => {
                                     }
                                 }}
                             />
+                            <select
+                                name="categoriaId"
+                                value={editandoAsignatura ? editandoAsignatura.categoriaId : semestre.nuevaAsignatura.categoriaId || ''}
+                                onChange={(e) => {
+                                    if (editandoAsignatura) {
+                                        handleEditInputChange(e);
+                                    } else {
+                                        handleCategoriaChange(e, semestre.id);
+                                    }
+                                }}
+                            >
+                                <option value="">Seleccionar Categoría</option>
+                                {categorias.map((categoria) => (
+                                    <option key={categoria.id} value={categoria.id}>
+                                        {categoria.nombre}
+                                    </option>
+                                ))}
+                            </select>
                             <label>
                                 <input
                                     type="checkbox"
@@ -317,6 +395,24 @@ const CrearMalla = () => {
                         </div>
                     </div>
                 ))}
+            </div>
+            <div className="categorias-container">
+                <h4>Categorías</h4>
+                <div className="etiquetas">
+                    {categorias.map((categoria) => (
+                        <span key={categoria.id} className="etiqueta">
+                            <input
+                                type="text"
+                                value={categoria.nombre}
+                                onChange={(e) => modificarCategoriaNombre(categoria.id, e.target.value)}
+                            />
+                            <button onClick={() => eliminarCategoria(categoria.id)}>X</button>
+                        </span>
+                    ))}
+                    {categorias.length < 4 && (
+                        <button className="agregar-etiqueta-btn" onClick={agregarCategoria}>+</button>
+                    )}
+                </div>
             </div>
         </div>
     );
