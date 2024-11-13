@@ -1,7 +1,7 @@
 // App.js
 import React, { useState } from 'react';
 import Simulador from './components/Simulador';
-import MallaCurricular from './components/CrearMalla';
+import MallaCurricular from './components/MallaCurricular';
 import Login from './components/Login';
 import CrearMalla from './components/CrearMalla';
 
