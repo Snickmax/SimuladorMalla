@@ -107,8 +107,17 @@ const CrearMalla = () => {
     const handleCarreraChange = async (event) => {
         const carreraId = event.target.value;
         setCarreraSeleccionada(carreras.find(c => c.id === carreraId))
+        console.log(carreraId)
+        console.log(carreras.find(c => c.id === carreraId))
+        console.log(carreraSeleccionada)
         fetchAsignaturas(carreraId);
     };
+    // Este useEffect se ejecuta cada vez que 'carreraSeleccionada' cambia
+    useEffect(() => {
+        if (carreraSeleccionada) {
+            console.log("Carrera seleccionada actualizada:", carreraSeleccionada);
+        }
+    }, [carreraSeleccionada]); // Dependencia en 'carreraSeleccionada
 
     const crearNuevaAsignatura = () => ({
         id: '',
@@ -380,7 +389,7 @@ const CrearMalla = () => {
             ])
         );
 
-        const carreraSeleccionadas = [carreraSeleccionada.id,carreraSeleccionada.nombre]
+        const carreraSeleccionadas = [carreraSeleccionada.id, carreraSeleccionada.nombre]
 
         const relacionConSemestre = semestres.map(semestre => [
             semestre.id,

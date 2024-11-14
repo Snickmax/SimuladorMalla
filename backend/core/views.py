@@ -76,18 +76,22 @@ class AsignaturaViewSet(viewsets.ViewSet):
         
         if not carreraSeleccionadas:
             return Response({"error": "El campo 'carreraSeleccionadas' es obligatorio"}, status=status.HTTP_400_BAD_REQUEST)
-        print(carreraSeleccionadas)
+
         conn = Neo4jConnection()
         with conn.driver.session() as session:
-            query ="""
-            MATCH (n) 
-            DETACH DELETE n; 
-            """
-
-            session.run(query)
-            
             carreraId, carreraNombre = carreraSeleccionadas
-                
+            query ="""
+            MATCH (c:Carrera {id: $nombre})<-[:PERTENECE_A]-(n)
+            DETACH DELETE n, c
+            """
+            session.run(query, nombre=carreraId)
+            
+            query ="""
+            MATCH (c:Carrera {id: $nombre})
+            DETACH DELETE c
+            """
+            session.run(query, nombre=carreraId)
+
             query = """
             CREATE (c:Carrera {id: $id, nombre: $nombre})
             """

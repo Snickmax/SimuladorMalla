@@ -11,7 +11,7 @@ function App() {
   return (
     <div className="App">
       <Login user={user} setUser={setUser}/> 
-      {user ? <Simulador user={user}/>: <MallaCurricular/>}
+      {user ? <Simulador user={user}/>: <CrearMalla/>}
     </div>
   );
 }
