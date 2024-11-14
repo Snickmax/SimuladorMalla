@@ -31,6 +31,15 @@ class AsignaturaViewSet(viewsets.ViewSet):
             """, carrera_id=carrera_id)
 
             asignaturas_por_semestre = {}
+            
+            # Definir el orden de las categorías
+            categoria_orden = {
+                "Categoria1": 1,
+                "Categoria2": 2,
+                "Categoria3": 3,
+                "Categoria4": 4
+            }
+
             for record in result:
                 semestre = record["semestre"]
                 asignatura_data = {
@@ -44,13 +53,19 @@ class AsignaturaViewSet(viewsets.ViewSet):
                     "postrequisitos": [{"id": po["id"], "nombre": po["nombre"], "creditos": po["creditos"]} for po in record["postrequisitos"]],
                 }
 
+                # Verificar si el semestre ya tiene asignaturas y agregar la nueva
                 if semestre not in asignaturas_por_semestre:
                     asignaturas_por_semestre[semestre] = []
                 asignaturas_por_semestre[semestre].append(asignatura_data)
 
+            # Ordenar las asignaturas dentro de cada semestre según el orden de las categorías
+            for semestre, asignaturas in asignaturas_por_semestre.items():
+                asignaturas.sort(key=lambda x: categoria_orden.get(x["categoriaId"], float('inf')))
+
         conn.close()  # Cerrar la conexión
-    
+
         return Response(asignaturas_por_semestre)
+
     
     def guardar_malla(self, request):
         todasLasAsignaturas = request.data.get('todasLasAsignaturas', [])

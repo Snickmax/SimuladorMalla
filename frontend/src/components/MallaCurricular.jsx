@@ -76,7 +76,7 @@ const MallaCurricular = () => {
         (prerrequisito) => prerrequisito.id === asignatura.id
       )
     ) {
-      return { backgroundColor: 'lightblue' };
+      return { backgroundColor: '#ff8a84', color: '#fff' };
     }
     if (
       hoveredAsignatura &&
@@ -84,10 +84,32 @@ const MallaCurricular = () => {
         (postrequisito) => postrequisito.id === asignatura.id
       )
     ) {
-      return { backgroundColor: 'orange' };
+      return { backgroundColor: '#af3a11', color: '#fff' };
     }
     return {};
   };
+
+  function enteroARomano(num) {
+    const valoresRomanos = [
+      { valor: 10, simbolo: 'X' },
+      { valor: 9, simbolo: 'IX' },
+      { valor: 5, simbolo: 'V' },
+      { valor: 4, simbolo: 'IV' },
+      { valor: 1, simbolo: 'I' }
+    ];
+
+    let resultado = '';
+
+    for (let i = 0; i < valoresRomanos.length; i++) {
+      while (num >= valoresRomanos[i].valor) {
+        resultado += valoresRomanos[i].simbolo;
+        num -= valoresRomanos[i].valor;
+      }
+    }
+
+    return resultado;
+  }
+
 
   return (
     <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>
@@ -123,7 +145,7 @@ const MallaCurricular = () => {
 
             return (
               <div key={semestre} className="semestre-columna">
-                <h3>Semestre {semestre}</h3>
+                <h3>{enteroARomano(semestre)} SEMESTRE</h3>
                 <div className="contenido-semestre">
                   {practicas.length > 0 && (
                     <div className="practica-columna">
@@ -135,7 +157,7 @@ const MallaCurricular = () => {
                           onMouseLeave={handleMouseLeave}
                           style={getBackgroundStyle(practica)}>
 
-                          <div className='ilPracticas'>
+                          <div className='ilPracticas' style={getBackgroundStyle(practica)}>
                             {practica.nombre}
                           </div>
                         </div>
@@ -146,7 +168,7 @@ const MallaCurricular = () => {
                     {asignaturasSinPracticas.map(asignatura => (
                       <div
                         key={asignatura.id}
-                        className="cuadro ilAsignaturas"
+                        className={`cuadro ilAsignaturas ${asignatura.categoriaId}`}
                         onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => { }}
                         onMouseEnter={() => handleMouseEnter(asignatura)}
                         onMouseLeave={handleMouseLeave}

@@ -44,10 +44,8 @@
 .semestre-columna {
     margin: 4px;
     padding: 10px;
-    border: 1px solid #ccc;
     /* Borde para cada columna */
     border-radius: 5px;
-    background-color: #f9f9f9;
     /* Fondo claro para las columnas */
     display: flex;
     /* Asegúrate de que sea un contenedor flexible */
@@ -69,7 +67,7 @@
     padding: 0px;
     border: 1px solid #28a745;
     /* Borde verde para las prácticas */
-    border-radius: 5px;
+    border-radius: 50px;
     margin-right: 10px;
     /* Espacio entre las prácticas y las asignaturas */
     flex-wrap: 0;
@@ -86,9 +84,11 @@
 .ulPracticas {
     padding: 0px;
     height: 100%;
+    border-radius: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #fff;
 }
 
 .ilPracticas {
@@ -97,7 +97,7 @@
     width: 100%;
     transform: rotate(90deg);
     /* Espacio en cada elemento de la lista */
-    color: #555;
+    color: #000000;
     /* Color del texto */
     white-space: nowrap;
     /* Evitar que se divida en líneas */
@@ -107,14 +107,12 @@
     text-align: center;
     padding: 5px;
     /* Espacio en cada elemento de la lista */
-    color: #555;
-    /* Color del texto */
 }
 
 .ilAsignaturas:hover,
 .ulPracticas:hover,
 .ulPracticas:hover .ilPracticas {
-    background-color: #333;
+    background-color: #ff6624;
     /* Cambiar color de fondo al pasar el ratón */
     color: #fff;
     /* Cambiar color de texto para mayor contraste */
@@ -124,13 +122,10 @@
 .cuadro {
     min-width: 150px;
     padding: 10px;
-    border: 1px solid #007bff;
+    border: 1px solid #000000;
     /* Borde azul para las asignaturas */
-    border-radius: 5px;
+    border-radius: 20px;
     margin-bottom: 5px;
-    /* Espacio entre los cuadros */
-    background-color: #f1f1f1;
-    /* Fondo para los cuadros */
 }
 
 h3 {
@@ -150,4 +145,24 @@ ul {
 
 ul li {
     margin-bottom: 10px;
+}
+
+.Categoria1 {
+    background-color: #1464f6;
+    color: #fff;
+}
+
+.Categoria2 {
+    background-color: #033076;
+    color: #fff;
+}
+
+.Categoria3 {
+    background-color: #606060;
+    color: #fff;
+}
+
+.Categoria4 {
+    background-color: #d5d5d5;
+    color: #000000;
 }
