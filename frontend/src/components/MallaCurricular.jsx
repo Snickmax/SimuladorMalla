@@ -13,35 +13,37 @@ const MallaCurricular = () => {
   const [notMenu, setNotMenu] = useState(false);
 
   useEffect(() => {
-    const fetchCarreras = async () => {
-      try {
-        const response = await axios.get('http://localhost:8000/carreras/');
-        setCarreras(response.data);
-        const response1 = await axios.get(`http://localhost:8000/asignaturas/?carreraId=${response.data[0]['id']}`);
-        setAsignaturas(response1.data);    
-      } catch (error) {
-        console.error('Error fetching carreras:', error);
-      }
-    };
-
     fetchCarreras();
   }, []);
-  
-  const handleCarreraChange = async (e) => {
-    const carreraId = e.target.value;
-    setSelectedCarrera(carreraId);
 
-    // Fetch asignaturas para la carrera seleccionada
-    if (carreraId) {
-      try {
-        const response = await axios.get(`http://localhost:8000/asignaturas/?carreraId=${carreraId}`);
-        setAsignaturas(response.data);
-      } catch (error) {
-        console.error('Error fetching asignaturas:', error);
+  const fetchCarreras = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/carreras/');
+      const carrerasData = response.data;
+      setCarreras(carrerasData);
+
+      if (carrerasData.length > 0) {
+        // Obtener las asignaturas de la primera carrera
+        fetchAsignaturas(carrerasData[0].id);
       }
-    } else {
-      setAsignaturas({}); // Resetear asignaturas si no hay carrera seleccionada
+    } catch (error) {
+      console.error('Error fetching carreras:', error);
     }
+  };
+
+  const fetchAsignaturas = async (carreraId) => {
+    try {
+      const response = await axios.get(`http://localhost:8000/asignaturas/?carreraId=${carreraId}`);
+      const asignaturasData = response.data;
+      setAsignaturas(asignaturasData);
+    } catch (error) {
+      console.error('Error fetching carreras:', error);
+    }
+  };
+
+  const handleCarreraChange = async (event) => {
+    const carreraId = event.target.value;
+    fetchAsignaturas(carreraId);
   };
 
   const handleAsignaturaClick = (asignatura) => {
@@ -96,15 +98,15 @@ const MallaCurricular = () => {
             <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
           ))}
         </select>
-        
+
         <div className="form-check form-switch">
-          <input 
-            className="form-check-input" 
-            type="checkbox" 
-            role="switch" 
-            id="flexSwitchCheckDefault" 
-            checked={notMenu} 
-            onChange={toggleNotMenu} 
+          <input
+            className="form-check-input"
+            type="checkbox"
+            role="switch"
+            id="flexSwitchCheckDefault"
+            checked={notMenu}
+            onChange={toggleNotMenu}
           />
           <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
             {notMenu ? "Desactivar Menú" : "Activar Menú"}
@@ -128,7 +130,7 @@ const MallaCurricular = () => {
                       {practicas.map(practica => (
                         <div className='ulPracticas'
                           key={practica.id}
-                          onClick={notMenu ? () => handleAsignaturaClick(practica) : () => {}}
+                          onClick={notMenu ? () => handleAsignaturaClick(practica) : () => { }}
                           onMouseEnter={() => handleMouseEnter(practica)}
                           onMouseLeave={handleMouseLeave}
                           style={getBackgroundStyle(practica)}>
@@ -145,7 +147,7 @@ const MallaCurricular = () => {
                       <div
                         key={asignatura.id}
                         className="cuadro ilAsignaturas"
-                        onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => {}}
+                        onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => { }}
                         onMouseEnter={() => handleMouseEnter(asignatura)}
                         onMouseLeave={handleMouseLeave}
                         style={getBackgroundStyle(asignatura)}
