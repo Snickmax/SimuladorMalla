@@ -51,27 +51,81 @@ class AsignaturaViewSet(viewsets.ViewSet):
         conn.close()  # Cerrar la conexión
     
         return Response(asignaturas_por_semestre)
-
-    def create(self, request):
-        nombre = request.data.get('nombre')
-        creditos = request.data.get('creditos')
-        id_asignatura = request.data.get('id')
+    
+    def guardar_malla(self, request):
+        todasLasAsignaturas = request.data.get('todasLasAsignaturas', [])
+        carreraSeleccionadas = request.data.get('carreraSeleccionadas', [])
+        relacionConSemestre = request.data.get('relacionConSemestre', [])
+        asignaturasConRequisitos = request.data.get('asignaturasConRequisitos', [])
+        requisitosNumericos = request.data.get('requisitosNumericos', [])
         
-        if not nombre or not creditos or not id_asignatura:
-            return Response({"error": "Todos los campos (id, nombre, créditos) son obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
-
+        if not carreraSeleccionadas:
+            return Response({"error": "El campo 'carreraSeleccionadas' es obligatorio"}, status=status.HTTP_400_BAD_REQUEST)
+        print(carreraSeleccionadas)
         conn = Neo4jConnection()
         with conn.driver.session() as session:
-            session.run(
-                """
-                CREATE (a:Asignatura {id: $id, nombre: $nombre, creditos: $creditos})
-                """,
-                id=id_asignatura, nombre=nombre, creditos=creditos
-            )
-        conn.close()
+            query ="""
+            MATCH (n) 
+            DETACH DELETE n; 
+            """
 
-        return Response({"message": "Nodo de asignatura creado exitosamente"}, status=status.HTTP_201_CREATED)
-        
+            session.run(query)
+            
+            carreraId, carreraNombre = carreraSeleccionadas
+                
+            query = """
+            CREATE (c:Carrera {id: $id, nombre: $nombre})
+            """
+            session.run(query, id=carreraId, nombre=carreraNombre )
+
+            for Id, nombre, creditos, descripcion, categoriaId, categoriaNombre in todasLasAsignaturas:
+                query = """
+                CREATE (a:Asignatura {id: $id, nombre: $nombre, creditos: $creditos, descripcion: $descripcion, categoriaId: $categoriaId, categoriaNombre: $categoriaNombre})
+                """
+                session.run(query, id=Id, nombre=nombre, creditos=creditos, descripcion=descripcion, categoriaId=categoriaId, categoriaNombre=categoriaNombre)
+            
+            for semestre, asignaturas in relacionConSemestre:
+                query = """
+                MATCH (c:Carrera {id: $nombre})
+                MATCH (a:Asignatura) WHERE a.id IN $asignaturas
+                CREATE (a)-[:PERTENECE_A {semestre: $semestre }]->(c)
+                """
+                session.run(query, asignaturas=asignaturas, semestre=semestre, nombre=carreraId)
+            
+            for asignatura, requisito in asignaturasConRequisitos:
+                query = """
+                MATCH (a1:Asignatura {id: $asignatura }), (a2:Asignatura {id: $requisito })
+                CREATE (a1)-[:REQUISITO {tipo: 'Requisito'}]->(a2)
+                CREATE (a2)-[:REQUISITO {tipo: 'Postrequisito'}]->(a1)
+                """
+                session.run(query, asignatura=asignatura, requisito=requisito)
+
+            for semester, subjects in requisitosNumericos:
+                
+                query_subjects = """
+                MATCH (s:Asignatura)-[:PERTENECE_A {semestre: $semester}]->(:Carrera {id: $nombre})
+                RETURN s.id AS subject_id
+                """
+                
+                current_subjects = session.run(query_subjects, semester=semester, nombre=carreraId).data()
+                
+                for subject in subjects:
+                    for current in current_subjects:
+                        current_subject_id = current['subject_id']
+                        
+                        query = """
+                        MATCH (a:Asignatura {id: $subject_id})
+                        MATCH (s:Asignatura {id: $object_final})
+                        CREATE (a)-[:REQUISITO {tipo: 'Requisito'}]->(s)
+                        CREATE (s)-[:REQUISITO {tipo: 'Postrequisito'}]->(a)
+                        """
+                        # Ejecutar la consulta con los parámetros correspondientes
+                        session.run(query, object_final=current_subject_id, subject_id=subject)
+       
+        conn.close()
+        return Response({"message": "Asignaturas guardadas y relaciones eliminadas exitosamente"}, status=status.HTTP_200_OK)
+
+
 class UsuarioViewSet(viewsets.ViewSet):
     def create(self, request):
         email = request.data.get('email')

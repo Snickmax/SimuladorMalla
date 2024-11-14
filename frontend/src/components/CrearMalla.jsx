@@ -3,6 +3,7 @@ import axios from 'axios';
 import './CrearMalla.css';
 
 const CrearMalla = () => {
+    const [carreraSeleccionada, setCarreraSeleccionada] = useState(null);
     const [carreras, setCarreras] = useState([]);
     const [semestres, setSemestres] = useState([]);
     const [categorias, setCategorias] = useState([]);
@@ -21,6 +22,7 @@ const CrearMalla = () => {
 
             if (carrerasData.length > 0) {
                 // Obtener las asignaturas de la primera carrera
+                setCarreraSeleccionada(carrerasData[0])
                 fetchAsignaturas(carrerasData[0].id);
             }
         } catch (error) {
@@ -104,6 +106,7 @@ const CrearMalla = () => {
 
     const handleCarreraChange = async (event) => {
         const carreraId = event.target.value;
+        setCarreraSeleccionada(carreras.find(c => c.id === carreraId))
         fetchAsignaturas(carreraId);
     };
 
@@ -364,6 +367,76 @@ const CrearMalla = () => {
         }));
     };
 
+    const guardarMalla = async () => {
+        // Obtener las asignaturas según su estado
+        const todasLasAsignaturas = semestres.flatMap(semestre =>
+            semestre.asignaturas.map(asignatura => [
+                asignatura.id,
+                asignatura.nombre,
+                asignatura.creditos,
+                asignatura.descripcion,
+                asignatura.categoriaId,
+                asignatura.categoriaNombre
+            ])
+        );
+
+        const carreraSeleccionadas = [carreraSeleccionada.id,carreraSeleccionada.nombre]
+
+        const relacionConSemestre = semestres.map(semestre => [
+            semestre.id,
+            semestre.asignaturas.map(asignatura => asignatura.id)
+        ]);
+
+        const asignaturasConRequisitos = [];
+
+        semestres.forEach(semestre => {
+            semestre.asignaturas.forEach(asignatura => {
+                if (asignatura.prerrequisito && asignatura.prerrequisito.length > 2) {
+                    asignaturasConRequisitos.push([asignatura.id, asignatura.prerrequisito]);
+                }
+            });
+        });
+
+        const requisitosNumericos = [];
+
+        semestres.forEach(semestre => {
+            semestre.asignaturas.forEach(asignatura => {
+                // Verificar si prerrequisito es numérico y no vacío
+                if (typeof asignatura.prerrequisito === 'number') {
+                    // Verificar si ya existe el prerrequisito en la lista
+                    const found = requisitosNumericos.find(item => item[0] === asignatura.prerrequisito);
+
+                    if (found) {
+                        // Si ya existe, agregamos la asignatura a la lista de asignaturas
+                        found[1].push(asignatura.id);
+                    } else {
+                        // Si no existe, agregamos una nueva entrada
+                        requisitosNumericos.push([asignatura.prerrequisito, [asignatura.id]]);
+                    }
+                }
+            });
+        });
+
+        try {
+            // Crear el objeto con todos los datos
+            const dataToSend = {
+                todasLasAsignaturas: todasLasAsignaturas,
+                carreraSeleccionadas: carreraSeleccionadas,
+                relacionConSemestre: relacionConSemestre,
+                asignaturasConRequisitos: asignaturasConRequisitos,
+                requisitosNumericos: requisitosNumericos
+            };
+
+            // Realizar la solicitud POST al backend para guardar y eliminar asignaturas
+            await axios.post('http://localhost:8000/guardar-malla/', dataToSend);
+            console.log("Malla guardadas en Neo4j");
+
+        } catch (error) {
+            console.error("Error al guardar Malla:", error.response ? error.response.data : error.message);
+        }
+
+    };
+
     return (
         <div className="crear-malla-container">
             <h1>Crear Malla Académica</h1>
@@ -569,7 +642,7 @@ const CrearMalla = () => {
                     )}
                 </div>
             </div>
-            <button className='agregar-semestre-btn'>Guardar</button>
+            <button className='agregar-semestre-btn' onClick={guardarMalla}>Guardar</button>
         </div>
     );
 };
