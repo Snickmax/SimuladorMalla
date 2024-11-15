@@ -23,7 +23,6 @@ const MallaCurricular = () => {
       setCarreras(carrerasData);
 
       if (carrerasData.length > 0) {
-        // Obtener las asignaturas de la primera carrera
         fetchAsignaturas(carrerasData[0].id);
       }
     } catch (error) {
@@ -89,6 +88,23 @@ const MallaCurricular = () => {
     return {};
   };
 
+  // Nueva función para aplicar estilo difuminado a otros elementos
+  const getDiffuseStyle = (asignatura) => {
+    if (
+      hoveredAsignatura &&
+      hoveredAsignatura.id !== asignatura.id &&
+      !hoveredAsignatura.prerrequisitos.some(
+        (prerrequisito) => prerrequisito.id === asignatura.id
+      ) &&
+      !hoveredAsignatura.postrequisitos.some(
+        (postrequisito) => postrequisito.id === asignatura.id
+      )
+    ) {
+      return { opacity: 0.5 };
+    }
+    return {};
+  };
+
   function enteroARomano(num) {
     const valoresRomanos = [
       { valor: 10, simbolo: 'X' },
@@ -110,12 +126,11 @@ const MallaCurricular = () => {
     return resultado;
   }
 
-
   return (
     <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>
       <div className='header'>
         <h1>Malla Interactiva</h1>
-        <select value={selectedCarrera} onChange={handleCarreraChange}>
+        <select onChange={handleCarreraChange}>
           {carreras.map((carrera) => (
             <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
           ))}
@@ -155,7 +170,7 @@ const MallaCurricular = () => {
                           onClick={notMenu ? () => handleAsignaturaClick(practica) : () => { }}
                           onMouseEnter={() => handleMouseEnter(practica)}
                           onMouseLeave={handleMouseLeave}
-                          style={getBackgroundStyle(practica)}>
+                          style={{ ...getBackgroundStyle(practica), ...getDiffuseStyle(practica) }}>
 
                           <div className='ilPracticas' style={getBackgroundStyle(practica)}>
                             {practica.nombre}
@@ -172,7 +187,10 @@ const MallaCurricular = () => {
                         onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => { }}
                         onMouseEnter={() => handleMouseEnter(asignatura)}
                         onMouseLeave={handleMouseLeave}
-                        style={getBackgroundStyle(asignatura)}
+                        style={{
+                          ...getBackgroundStyle(asignatura),
+                          ...getDiffuseStyle(asignatura),
+                        }}
                       >
                         {asignatura.nombre}
                       </div>

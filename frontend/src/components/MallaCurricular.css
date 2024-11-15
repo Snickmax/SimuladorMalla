@@ -71,6 +71,7 @@
     margin-right: 10px;
     /* Espacio entre las prácticas y las asignaturas */
     flex-wrap: 0;
+    min-height: 500px;
 }
 
 .ulAsignaturas {
@@ -121,11 +122,14 @@
 
 .cuadro {
     min-width: 150px;
+    min-height: 60px;
+    align-content: center;
     padding: 10px;
     border: 1px solid #000000;
     /* Borde azul para las asignaturas */
     border-radius: 20px;
     margin-bottom: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease;
 }
 
 h3 {

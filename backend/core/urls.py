@@ -10,6 +10,7 @@ guardar_asignaturas = UsuarioViewSet.as_view({'post': 'guardar_asignaturas'})
 eliminar_relacion_asignatura = UsuarioViewSet.as_view({'delete': 'eliminar_relacion_asignatura'})
 obtener_estados = UsuarioViewSet.as_view({'get': 'obtener_estados'})
 guardar_malla = AsignaturaViewSet.as_view({'post': 'guardar_malla'})
+eliminar_malla = AsignaturaViewSet.as_view({'post': 'eliminar_malla'})
 
 
 urlpatterns = [
@@ -19,4 +20,5 @@ urlpatterns = [
     path('guardar-usuario/', usuario_create, name='guardar-usuario'),  
     path('guardar-asignaturas/', guardar_asignaturas, name='guardar-asignaturas'),
     path('guardar-malla/', guardar_malla, name='guardar-malla'),
+    path('eliminar-malla/', eliminar_malla, name='eliminar-malla'),
 ]

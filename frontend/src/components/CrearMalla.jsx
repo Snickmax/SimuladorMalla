@@ -6,7 +6,7 @@ const CrearMalla = () => {
     const [carreraSeleccionada, setCarreraSeleccionada] = useState(null);
     const [carreras, setCarreras] = useState([]);
     const [semestres, setSemestres] = useState([]);
-    const [categorias, setCategorias] = useState([]);
+    const [categorias, setCategorias] = useState([{ id: 'Práctica', nombre: 'Práctica' }]);
     const [editandoAsignatura, setEditandoAsignatura] = useState(null);
 
     // Llamamos a la función que carga las carreras y asignaturas al cargar el componente
@@ -92,7 +92,7 @@ const CrearMalla = () => {
                 }),
                 nuevaAsignatura: crearNuevaAsignatura() // Asumo que esta función es parte de tu código
             }));
-
+            
             const categoriasArray = Object.values(categoriasMap);
 
             // Establecer el estado de los semestres y categorías
@@ -107,9 +107,6 @@ const CrearMalla = () => {
     const handleCarreraChange = async (event) => {
         const carreraId = event.target.value;
         setCarreraSeleccionada(carreras.find(c => c.id === carreraId))
-        console.log(carreraId)
-        console.log(carreras.find(c => c.id === carreraId))
-        console.log(carreraSeleccionada)
         fetchAsignaturas(carreraId);
     };
     // Este useEffect se ejecuta cada vez que 'carreraSeleccionada' cambia
@@ -131,10 +128,10 @@ const CrearMalla = () => {
     });
 
     const agregarCategoria = () => {
-        if (categorias.length < 4) {
+        if (categorias.length < 5) {
             const nuevaCategoria = {
-                id: `Categoria${categorias.length + 1}`,
-                nombre: `Nombre de Categoria ${categorias.length + 1}`
+                id: `Categoria${categorias.length}`,
+                nombre: `Nombre de Categoria ${categorias.length}`
             };
             setCategorias([...categorias, nuevaCategoria]);
         } else {
@@ -147,13 +144,37 @@ const CrearMalla = () => {
             id: `carrera ${carreras.length + 1}`,
             nombre: `Nombre de carrera ${carreras.length + 1}`
         };
+        if (!carreraSeleccionada) {
+            setCarreraSeleccionada(nuevaCarrera);
+        }
+
         setCarreras([...carreras, nuevaCarrera]);
     };
 
-    const eliminarCarrera = (carreraId) => {
+    const eliminarCarrera = async (carreraId) => {
+        const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar esta carrera?");
 
+        if (!confirmacion) {
+            // Si el usuario cancela, salir de la función
+            return;
+        }
+        
+        // Si la carrera eliminada es la misma que la carrera seleccionada, vaciar los semestres
+        if (carreraId === carreraSeleccionada?.id) {
+            setSemestres([]);  // Vaciar semestres si se elimina la carrera seleccionada
+            setCategorias([{ id: 'Práctica', nombre: 'Práctica' }]);
+        }
+        // Procede con la eliminación solo si el usuario confirma
         setCarreras(carreras.filter(cat => cat.id !== carreraId));
+        try {
+            // Realizar la solicitud POST al backend para guardar y eliminar asignaturas
+            await axios.post('http://localhost:8000/eliminar-malla/', { carreraId });
+            alert("Malla guardadas en Neo4j");
+        } catch (error) {
+            console.error("No existe en la base de datos");
+        }
     };
+
 
     const eliminarCategoria = (categoriaId) => {
         if (categorias[categorias.length - 1].id !== categoriaId) {
@@ -410,17 +431,18 @@ const CrearMalla = () => {
 
         semestres.forEach(semestre => {
             semestre.asignaturas.forEach(asignatura => {
+                console.log(String(asignatura.prerrequisito).length, typeof asignatura.prerrequisito)
                 // Verificar si prerrequisito es numérico y no vacío
-                if (typeof asignatura.prerrequisito === 'number') {
+                if (String(asignatura.prerrequisito).length < 2) {
                     // Verificar si ya existe el prerrequisito en la lista
-                    const found = requisitosNumericos.find(item => item[0] === asignatura.prerrequisito);
+                    const found = requisitosNumericos.find(item => item[0] === Number(asignatura.prerrequisito));
 
                     if (found) {
                         // Si ya existe, agregamos la asignatura a la lista de asignaturas
                         found[1].push(asignatura.id);
                     } else {
                         // Si no existe, agregamos una nueva entrada
-                        requisitosNumericos.push([asignatura.prerrequisito, [asignatura.id]]);
+                        requisitosNumericos.push([Number(asignatura.prerrequisito), [asignatura.id]]);
                     }
                 }
             });
@@ -438,7 +460,7 @@ const CrearMalla = () => {
 
             // Realizar la solicitud POST al backend para guardar y eliminar asignaturas
             await axios.post('http://localhost:8000/guardar-malla/', dataToSend);
-            console.log("Malla guardadas en Neo4j");
+            alert("Malla guardadas en Neo4j");
 
         } catch (error) {
             console.error("Error al guardar Malla:", error.response ? error.response.data : error.message);
@@ -642,15 +664,19 @@ const CrearMalla = () => {
                                 type="text"
                                 value={categoria.nombre}
                                 onChange={(e) => modificarCategoriaNombre(categoria.id, e.target.value)}
+                                disabled={categoria.id === 'Práctica'}
                             />
-                            <button onClick={() => eliminarCategoria(categoria.id)}>X</button>
+                            {categoria.id !== 'Práctica' && (
+                                <button onClick={() => eliminarCategoria(categoria.id)}>X</button>
+                            )}
                         </span>
                     ))}
-                    {categorias.length < 4 && (
+                    {categorias.length < 5 && (
                         <button className="agregar-etiqueta-btn" onClick={agregarCategoria}>+</button>
                     )}
                 </div>
             </div>
+
             <button className='agregar-semestre-btn' onClick={guardarMalla}>Guardar</button>
         </div>
     );

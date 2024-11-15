@@ -66,7 +66,17 @@ class AsignaturaViewSet(viewsets.ViewSet):
 
         return Response(asignaturas_por_semestre)
 
-    
+    def eliminar_malla(self, request):
+        carreraId = request.data.get('carreraId')
+        conn = Neo4jConnection()
+        
+        with conn.driver.session() as session:
+            query ="""
+            MATCH (c:Carrera {id: $nombre})<-[:PERTENECE_A]-(n)
+            DETACH DELETE n, c
+            """
+            session.run(query, nombre=carreraId)
+
     def guardar_malla(self, request):
         todasLasAsignaturas = request.data.get('todasLasAsignaturas', [])
         carreraSeleccionadas = request.data.get('carreraSeleccionadas', [])
