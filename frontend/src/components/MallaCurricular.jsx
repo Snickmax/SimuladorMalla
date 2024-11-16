@@ -31,7 +31,6 @@ const MallaCurricular = () => {
     const carreraId = e.target.value;
     setSelectedCarrera(carreraId);
 
-    // Fetch asignaturas para la carrera seleccionada
     if (carreraId) {
       try {
         const response = await axios.get(`http://localhost:8000/asignaturas/?carreraId=${carreraId}`);
@@ -40,7 +39,7 @@ const MallaCurricular = () => {
         console.error('Error fetching asignaturas:', error);
       }
     } else {
-      setAsignaturas({}); // Resetear asignaturas si no hay carrera seleccionada
+      setAsignaturas({});
     }
   };
 
@@ -87,10 +86,19 @@ const MallaCurricular = () => {
     return {};
   };
 
+  const toRoman = (num) => {
+    const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
+    return romanNumerals[num - 1] || num;
+  };
+
   return (
     <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>
       <div className='header'>
-        <h1>Malla Interactiva</h1>
+        <h1>Malla Ingeniería Civil en Computación e Informática</h1>
+        <h2>Facultad de Ingeniería y Arquitectura</h2>
+
+        <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" /> 
+
         <select value={selectedCarrera} onChange={handleCarreraChange}>
           {carreras.map((carrera) => (
             <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
@@ -120,8 +128,15 @@ const MallaCurricular = () => {
             const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.nombre.includes('Práctica'));
 
             return (
-              <div key={semestre} className="semestre-columna">
-                <h3>Semestre {semestre}</h3>
+              <div key={semestre} className="semestre-columna" style={{ position: 'relative' }}>
+                {/* Cuadraditos de "Tema" encima de los semestres específicos */}
+                {(semestre === '2' || semestre === '4' || semestre === '6') && (
+                  <div className={`tema-item tema-${semestre}`}>
+                    <span className={`color-box tema-color tema-color-tema-${semestre}`}></span> 
+                    {`Tema ${semestre === '2' ? 'I' : semestre === '4' ? 'II' : 'III'}`}
+                  </div>
+                )}
+                <h3>Semestre {toRoman(parseInt(semestre, 10))}</h3>
                 <div className="contenido-semestre">
                   {practicas.length > 0 && (
                     <div className="practica-columna">
@@ -161,7 +176,6 @@ const MallaCurricular = () => {
         </div>
 
         <div className={`sidebar ${isMenuVisible ? 'visible' : ''}`}>
-          <button className="close-btn" onClick={handleCloseMenu}>X</button>
           <h2>{selectedAsignatura?.nombre} ({selectedAsignatura?.creditos} créditos)</h2>
           <p><strong>Descripción:</strong> {selectedAsignatura?.descripcion}</p>
           <p><strong>Prerrequisitos:</strong></p>
@@ -180,6 +194,11 @@ const MallaCurricular = () => {
               </li>
             ))}
           </ul>
+
+          {/* Botón para cerrar el menú en la parte inferior */}
+          {isMenuVisible && (
+            <button className="close-menu-button" onClick={handleCloseMenu}>❮</button>
+          )}
         </div>
       </div>
     </div>

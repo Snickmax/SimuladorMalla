@@ -1,15 +1,13 @@
-// Login.js
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 
-function Login({ user, setUser }) {
+function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible como prop
+    const [showGoogleSignIn, setShowGoogleSignIn] = useState(false);
+
     function handleCallbackResponse(response) {
         const userObject = jwtDecode(response.credential);
-        console.log(userObject)
-        console.log(user)
         setUser(userObject);
-        document.getElementById("signInDiv").hidden = true;
 
         const email = userObject.email;
         if (email) {
@@ -27,7 +25,7 @@ function Login({ user, setUser }) {
 
     function handleSignOut() {
         setUser(null);
-        document.getElementById("signInDiv").hidden = false;
+        setShowGoogleSignIn(false);
     }
 
     useEffect(() => {
@@ -36,27 +34,37 @@ function Login({ user, setUser }) {
             callback: handleCallbackResponse
         });
 
-        window.google.accounts.id.renderButton(
-            document.getElementById("signInDiv"),
-            { theme: "outline", size: "large" }
-        );
-    }, []);
+        if (showGoogleSignIn) {
+            window.google.accounts.id.renderButton(
+                document.getElementById("signInDiv"),
+                { theme: "outline", size: "large" }
+            );
+        }
+    }, [showGoogleSignIn]);
 
     return (
-        <div>
-            <div id="signInDiv"></div>
+        <div className={`login-container ${isMenuVisible ? 'menu-open' : ''}`}>
+            {/* Contenedor del botón "Simulador" y "Acceder por Google" */}
+            <div className="simulador-container">
+                <button className="simulador-button" onClick={() => setShowGoogleSignIn(true)}>Simulador</button>
 
+                {/* Botón "Acceder por Google" aparece debajo de "Simulador" */}
+                {showGoogleSignIn && (
+                    <div id="signInDiv" style={{ marginTop: '10px' }}></div>
+                )}
+            </div>
+
+            {/* Información del usuario cuando está logueado */}
             {
                 user && (
                     <div className="user-info">
-
-                        <button onClick={handleSignOut}>Cerrar Sesion</button>
+                        <button onClick={handleSignOut}>Cerrar Sesión</button>
                         <img src={user.picture} alt="User" />
                         <h3>{user.name}</h3>
                     </div>
                 )
             }
-        </div >
+        </div>
     );
 }
 
