@@ -129,7 +129,11 @@ const MallaCurricular = () => {
   return (
     <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>
       <div className='header'>
-        <h1>Malla Interactiva</h1>
+        <h1>Malla Ingeniería Civil en Computación e Informática</h1>
+        <h2>Facultad de Ingeniería y Arquitectura</h2>
+
+        <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" /> 
+
         <select onChange={handleCarreraChange}>
           {carreras.map((carrera) => (
             <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
@@ -203,7 +207,6 @@ const MallaCurricular = () => {
         </div>
 
         <div className={`sidebar ${isMenuVisible ? 'visible' : ''}`}>
-          <button className="close-btn" onClick={handleCloseMenu}>X</button>
           <h2>{selectedAsignatura?.nombre} ({selectedAsignatura?.creditos} créditos)</h2>
           <p><strong>Descripción:</strong> {selectedAsignatura?.descripcion}</p>
           <p><strong>Prerrequisitos:</strong></p>
@@ -222,6 +225,11 @@ const MallaCurricular = () => {
               </li>
             ))}
           </ul>
+
+          {/* Botón para cerrar el menú en la parte inferior */}
+          {isMenuVisible && (
+            <button className="close-menu-button" onClick={handleCloseMenu}>❮</button>
+          )}
         </div>
       </div>
     </div>
