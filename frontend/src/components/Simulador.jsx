@@ -58,15 +58,15 @@ function Simulador ({user}){
         let nuevoEstado;
 
         if (currentEstado === 'noCursado') {
-            if (creditosSeleccionados + asignatura.creditos > 30) {
+            if (creditosSeleccionados + Number(asignatura.creditos) > 30) {
                 alert("No puedes seleccionar más de 30 créditos.");
                 return;
             }
             nuevoEstado = 'enCurso';
-            setCreditosSeleccionados(prev => prev + asignatura.creditos);
+            setCreditosSeleccionados(prev => prev + Number(asignatura.creditos));
         } else if (currentEstado === 'enCurso') {
             nuevoEstado = 'aprobado';
-            setCreditosSeleccionados(prev => prev - asignatura.creditos);
+            setCreditosSeleccionados(prev => prev - Number(asignatura.creditos));
         } else if (currentEstado === 'aprobado') {
             nuevoEstado = 'noCursado';
         }
