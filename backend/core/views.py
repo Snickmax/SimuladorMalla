@@ -29,7 +29,7 @@ class AsignaturaViewSet(viewsets.ViewSet):
                     p.semestre AS semestre, a.categoriaId AS categoriaId, a.categoriaNombre AS categoriaNombre, prerrequisitos, postrequisitos
                 ORDER BY p.semestre
             """, carrera_id=carrera_id)
-
+            
             asignaturas_por_semestre = {}
             
             # Definir el orden de las categorías
@@ -245,18 +245,36 @@ class UsuarioViewSet(viewsets.ViewSet):
         conn.close()
         return Response({"message": "Asignaturas guardadas y relaciones eliminadas exitosamente"}, status=status.HTTP_200_OK)
 
-    
-        
-    def obtener_estados(self, userId):
-        conn= Neo4jConnection()
+    def obtener_estados(self, request):
+        email = request.query_params.get('email')
+
+        if not email:
+            return Response({"error": "El campo 'email' es obligatorio"}, status=status.HTTP_400_BAD_REQUEST)
+
+        conn = Neo4jConnection()
+        total_creditos = 0
+        estados = {}
+
         with conn.driver.session() as session:
             result = session.run(
                 """
-                MATCH p=(:Usuario {email: $userId })-[r:CURSA]->(:Asignatura) 
-                RETURN p
+                MATCH (u:Usuario {email: $email })-[r:CURSA]->(a:Asignatura)
+                RETURN r.estado as estado, a.id as asig, a.creditos as creditos
                 """,
-                userId=userId
-                
-            ).single()
-            
+                email=email
+            )
+
+            for record in result:
+                estado = record["estado"]
+                asignatura_id = record["asig"]
+                creditos = record["creditos"]
+
+                estados[asignatura_id] = estado
+
+                # Solo sumamos los créditos si el estado es "enCurso"
+                if estado == "enCurso":
+                    total_creditos += creditos
+
+        conn.close()
+        return Response({"estados": estados, "totalcreditos": total_creditos})
         

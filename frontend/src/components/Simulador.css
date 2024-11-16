@@ -18,7 +18,7 @@
     flex-wrap: nowrap;
 }
 
-.ulAsignaturas {
+.ulAsignatura {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
@@ -51,7 +51,11 @@
 
 /* Ajustes de interacción y simulación */
 .cuadro:hover {
-    background-color: #e0e7ff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.ulPractica:hover {
     cursor: pointer;
     transition: background-color 0.2s;
 }
