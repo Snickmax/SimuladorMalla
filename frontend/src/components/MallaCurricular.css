@@ -1,7 +1,44 @@
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.header h2 {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #666;
+    margin: 0;
+    margin-left: -46vh; /* Ajusta este valor para moverlo hacia la izquierda */
+}
+
+
+.header select,
+.header .form-check {
+    margin-top: 10px;
+}
+
 .malla-curricular {
     overflow-x: auto;
     display: flex;
     transition: margin-left 0.3s ease;
+    background-color: #f0f0f0; /* Fondo gris desde el botón "Activar Menú" hacia abajo */
+    padding: 20px;
+    min-height: 100vh; /* Extender hasta el fondo de la pantalla */
+    overflow-x: auto;
+    display: flex;
+    transition: margin-left 0.3s ease;
+    background-color: #f0f0f0;
+    padding: 20px;
+    min-height: 50vh; /* Ocupa el 90% de la altura de la pantalla */
 }
 
 .menu-visible .malla-container, .menu-visible .header {
@@ -11,7 +48,7 @@
 
 .sidebar {
     width: 300px;
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     height: 100vh;
     position: fixed;
     top: 0;
@@ -38,7 +75,6 @@
 .malla-container {
     display: flex;
     flex-wrap: nowrap;
-    /* Usar flexbox para las columnas */
 }
 
 .semestre-columna {
@@ -51,35 +87,39 @@
     /* Asegúrate de que sea un contenedor flexible */
     flex-direction: column;
     /* Para apilar contenido verticalmente */
+    background-color: transparent;
+    border: none; /* Quitar borde de cada semestre */
 }
+
 
 .contenido-semestre {
     display: flex;
-    height: auto;
-    /* Permitir que el alto se ajuste al contenido */
+    height: 100%; /* Ocupa toda la altura disponible del contenedor */
     flex-grow: 1;
+    align-items: stretch; /* Estira los elementos hijos */
 }
 
 .practica-columna {
-    background-color: #e9f7ef;
-    /* Fondo distinto para las prácticas */
+    background-color: #fafafa;
     width: 50px;
     padding: 0px;
-    border: 1px solid #28a745;
-    /* Borde verde para las prácticas */
+    border: 1px solid #0051ff;
     border-radius: 50px;
     margin-right: 10px;
     /* Espacio entre las prácticas y las asignaturas */
     flex-wrap: 0;
     min-height: 500px;
+    flex-grow: 1; /* Permite que la columna de prácticas ocupe toda la altura */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribuye el contenido verticalmente */
 }
+
 
 .ulAsignaturas {
     display: flex;
     flex-direction: column;
-    /* Apilar asignaturas verticalmente */
     flex-grow: 1;
-    /* Permitir que ocupe el espacio restante */
 }
 
 .ulPracticas {
@@ -97,28 +137,22 @@
     display: flex;
     width: 100%;
     transform: rotate(90deg);
-    /* Espacio en cada elemento de la lista */
     color: #000000;
-    /* Color del texto */
     white-space: nowrap;
-    /* Evitar que se divida en líneas */
 }
 
 .ilAsignaturas {
     text-align: center;
     padding: 5px;
-    /* Espacio en cada elemento de la lista */
+    color: #555;
 }
 
 .ilAsignaturas:hover,
 .ulPracticas:hover,
 .ulPracticas:hover .ilPracticas {
     background-color: #ff6624;
-    /* Cambiar color de fondo al pasar el ratón */
     color: #fff;
-    /* Cambiar color de texto para mayor contraste */
 }
-
 
 .cuadro {
     min-width: 150px;
@@ -134,13 +168,9 @@
 
 h3 {
     text-align: center;
-    /* Centrar el título del semestre */
     font-size: 1.2rem;
-    /* Tamaño de fuente */
     color: #333;
-    /* Color del texto */
     white-space: nowrap;
-    /* Evitar que se divida en líneas */
 }
 
 ul {
@@ -149,6 +179,264 @@ ul {
 
 ul li {
     margin-bottom: 10px;
+}
+
+/* Estilo para el botón "Simulador" en la esquina superior derecha */
+.simulador-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Alinea el botón de "Acceder por Google" debajo del botón "Simulador" */
+}
+
+.simulador-button {
+    min-width: 150px;
+    padding: 10px;
+    border: 1px solid #011b36;
+    border-radius: 5px;
+    background-color: #2b41ff;
+    color: #fff8f8;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 13vh; /* Ajusta este valor para bajar el botón */
+}
+
+.simulador-button:hover {
+    background-color: #59a5f7;
+    color: #fff;
+}
+
+/* Asegurarse de que el contenedor tenga `position: relative` para que el botón se posicione correctamente */
+.login-container {
+    position: relative;
+    padding-top: 60px; /* Espacio superior para el título */
+}
+
+.logo-ucen {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        max-width: 40vh; /* Ajusta el tamaño según sea necesario */
+        
+    }
+/* Estilos para los cuadros de tema */
+.tema-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #333;
+    position: absolute;
+    top: -15px; /* Ajusta la altura para colocarlo encima de la línea gris */
+    left: 50%; /* Centra el cuadro en la columna del semestre */
+    transform: translateX(-50%);
+    z-index: 2; /* Coloca los cuadros sobre el fondo gris */
+}
+
+/* Colores de cada tema */
+.tema-color-tema-2 {
+    background-color: #007bff; /* Azul para Tema I */
+}
+
+.tema-color-tema-4 {
+    background-color: #0051a3; /* Azul oscuro para Tema II */
+}
+
+.tema-color-tema-6 {
+    background-color: #bfbfbf; /* Gris para Tema III */
+}
+
+/* General color box */
+.tema-color {
+    width: 15px;
+    height: 15px;
+    margin-right: 8px;
+    display: inline-block;
+    border-radius: 3px;
+}
+
+
+.menu-visible .main-content {
+    margin-left: 310px;
+    transition: margin-left 0.3s ease;
+  }
+
+  .menu-open .logo-ucen {
+    transform: translateX(310px);
+    transition: transform 0.3s ease;
+  }
+  
+  .menu-open .header {
+    transform: translateX(310px);
+    transition: transform 0.3s ease;
+  }
+  
+  .menu-open .simulador-button,
+.menu-open #signInDiv {
+    transform: translateX(310px);
+    transition: transform 0.3s ease;
+}
+
+.menu-open .login-container {
+    transform: translateX(310px);
+    transition: transform 0.3s ease;
+}
+
+.sidebar .close-menu-button {
+    position: absolute;
+    bottom: 20px; /* Ajusta la distancia desde abajo */
+    left: 30vh; /* Ajusta la posición hacia la izquierda */
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar .close-menu-button:hover {
+    background-color: #555;
+}
+
+/* Añadir una clase que desplace todo el contenido a la derecha cuando el menú esté visible */
+.menu-visible .header,
+.menu-visible .malla-curricular,
+.menu-visible .simulador-container,
+.menu-visible .logo-ucen {
+    margin-left: 310px; /* Ajusta este valor según el ancho del menú lateral */
+    transition: margin-left 0.3s ease;
+}
+
+/* Ajustes generales para pantallas pequeñas */
+@media (max-width: 768px) {
+    /* Ajustar el contenedor principal para pantallas pequeñas */
+    .malla-curricular {
+        padding: 10px;
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    /* Ajuste del header para que se vea centrado en móviles */
+    .header {
+        align-items: flex-start;
+        text-align: left;
+        padding: 10px;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .header h2 {
+        font-size: 1rem;
+        margin-left: 0;
+    }
+
+    /* Imagen del logo: reducir tamaño y centrar */
+    .logo-ucen {
+        max-width: 20vh; /* Ajusta el tamaño para móvil */
+        margin: 0 auto;
+        display: block;
+    }
+
+    /* Botón Simulador: tamaño y ubicación en móviles */
+    .simulador-container {
+        position: relative;
+        top: 10px;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+    .simulador-button {
+        width: 100%;
+        max-width: 200px;
+        margin-top: 0;
+    }
+
+    /* Cuadraditos de tema */
+    .tema-item {
+        position: relative;
+        left: 0;
+        top: 0;
+        transform: none;
+        margin: 10px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Botón de cierre del menú en móvil */
+    .close-btn-mobile {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    /* Ajustar los semestres para que se ordenen en una sola columna */
+    .semestre-columna {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .contenido-semestre {
+        flex-direction: column;
+    }
+
+/* Sidebar escondido por defecto en pantallas pequeñas */
+.sidebar {
+    display: none; /* Escondido en dispositivos móviles inicialmente */
+}
+
+/* Mostrar el sidebar cuando está activo */
+.sidebar.visible {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    overflow-y: auto;
+    z-index: 1000; /* Asegurarse de que esté por encima de otros elementos */
+    padding: 20px;
+}
+
+/* Ajuste adicional para el contenido dentro del sidebar */
+.sidebar h2,
+.sidebar p,
+.sidebar ul {
+    margin-bottom: 10px;
+}
+
+/* Evitar que el contenido del sidebar "flote" en la pantalla */
+.malla-curricular {
+    overflow-y: auto;
+}
+
+/* Ajuste de contenido en pantallas más pequeñas */
+@media (max-width: 768px) {
+    .malla-curricular {
+        padding-bottom: 0; /* Ajuste del espacio si el sidebar ocupa toda la pantalla */
+    }
+
+    .simulador-container {
+        margin-bottom: 20px;
+    }
+}
+
 }
 
 .Categoria1 {
