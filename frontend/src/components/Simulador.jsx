@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Login from './Login';
 
-function Simulador ({user}){
+function Simulador({ user }) {
     const [asignaturas, setAsignaturas] = useState({});
     const [carreras, setCarreras] = useState([]);
     const [selectedCarrera, setSelectedCarrera] = useState('');
@@ -84,22 +84,22 @@ function Simulador ({user}){
         const asignaturasEnCurso = Object.entries(estadoAsignaturas)
             .filter(([_, estado]) => estado === 'enCurso')
             .map(([id]) => id);
-    
+
         const asignaturasAprobadas = Object.entries(estadoAsignaturas)
             .filter(([_, estado]) => estado === 'aprobado')
             .map(([id]) => id);
-    
+
         const asignaturasNoCursadas = Object.entries(estadoAsignaturas)
             .filter(([_, estado]) => estado === 'noCursado')
             .map(([id]) => id);
-    
+
         // Verificar si el usuario está autenticado y tiene un email válido
         if (user) {
             console.log("Email:", user.email);
             console.log("Asignaturas en curso:", asignaturasEnCurso);
             console.log("Asignaturas aprobadas:", asignaturasAprobadas);
             console.log("Asignaturas no cursadas:", asignaturasNoCursadas);
-    
+
             try {
                 // Crear el objeto con todos los datos
                 const dataToSend = {
@@ -108,11 +108,11 @@ function Simulador ({user}){
                     asignaturas_aprobadas: asignaturasAprobadas,
                     asignaturas_a_eliminar: asignaturasNoCursadas
                 };
-    
+
                 // Realizar la solicitud POST al backend para guardar y eliminar asignaturas
                 await axios.post('http://localhost:8000/guardar-asignaturas/', dataToSend);
                 console.log("Asignaturas guardadas y relaciones eliminadas en Neo4j");
-    
+
             } catch (error) {
                 console.error("Error al guardar o eliminar asignaturas:", error.response ? error.response.data : error.message);
             }
@@ -124,22 +124,22 @@ function Simulador ({user}){
     const getBackgroundStyle = (asignatura) => {
         const currentEstado = estadoAsignaturas[asignatura.id] || 'noCursado'
         if (currentEstado === 'noCursado') {
-            return{
+            return {
                 backgroundColor: 'white'
             }
 
         } else if (currentEstado === 'enCurso') {
-            return{
+            return {
                 backgroundColor: 'orange'
             }
         } else if (currentEstado === 'aprobado') {
-            return{
+            return {
                 backgroundColor: 'green'
             }
         }
-        return {backgroundColor:"white"};
-      };
-    
+        return { backgroundColor: "white" };
+    };
+
 
     return (
         <GoogleOAuthProvider clientId="1092419716281-mregl22qvg3k1qtgmcgg2ecaem5j2ckq.apps.googleusercontent.com">
@@ -196,8 +196,8 @@ function Simulador ({user}){
                             );
                         })}
                     </div>
-                    <button className="guardar-boton" onClick={guardarAsignaturas}>Guardar</button>
                 </div>
+                <button className="guardar-boton" onClick={guardarAsignaturas}>Guardar</button>
             </div>
         </GoogleOAuthProvider>
     );

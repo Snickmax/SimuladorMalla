@@ -17,7 +17,8 @@
     font-weight: normal;
     color: #666;
     margin: 0;
-    margin-left: -46vh; /* Ajusta este valor para moverlo hacia la izquierda */
+    margin-left: -46vh;
+    /* Ajusta este valor para moverlo hacia la izquierda */
 }
 
 
@@ -30,21 +31,20 @@
     overflow-x: auto;
     display: flex;
     transition: margin-left 0.3s ease;
-    background-color: #f0f0f0; /* Fondo gris desde el botón "Activar Menú" hacia abajo */
+    background-color: #f0f0f0;
+    /* Fondo gris desde el botón "Activar Menú" hacia abajo */
     padding: 20px;
-    min-height: 100vh; /* Extender hasta el fondo de la pantalla */
+    min-height: 100vh;
+    /* Extender hasta el fondo de la pantalla */
     overflow-x: auto;
     display: flex;
     transition: margin-left 0.3s ease;
     background-color: #f0f0f0;
     padding: 20px;
-    min-height: 50vh; /* Ocupa el 90% de la altura de la pantalla */
+    min-height: 50vh;
+    /* Ocupa el 90% de la altura de la pantalla */
 }
 
-.menu-visible .malla-container, .menu-visible .header {
-    margin-left: 310px;
-    /* Ajustar este valor según el ancho del menú lateral */
-}
 
 .sidebar {
     width: 300px;
@@ -88,15 +88,18 @@
     flex-direction: column;
     /* Para apilar contenido verticalmente */
     background-color: transparent;
-    border: none; /* Quitar borde de cada semestre */
+    border: none;
+    /* Quitar borde de cada semestre */
 }
 
 
 .contenido-semestre {
     display: flex;
-    height: 100%; /* Ocupa toda la altura disponible del contenedor */
+    height: 100%;
+    /* Ocupa toda la altura disponible del contenedor */
     flex-grow: 1;
-    align-items: stretch; /* Estira los elementos hijos */
+    align-items: stretch;
+    /* Estira los elementos hijos */
 }
 
 .practica-columna {
@@ -109,10 +112,12 @@
     /* Espacio entre las prácticas y las asignaturas */
     flex-wrap: 0;
     min-height: 500px;
-    flex-grow: 1; /* Permite que la columna de prácticas ocupe toda la altura */
+    flex-grow: 1;
+    /* Permite que la columna de prácticas ocupe toda la altura */
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Distribuye el contenido verticalmente */
+    justify-content: space-between;
+    /* Distribuye el contenido verticalmente */
 }
 
 
@@ -180,9 +185,8 @@ ul {
 ul li {
     margin-bottom: 10px;
 }
-
 /* Estilo para el botón "Simulador" en la esquina superior derecha */
-.simulador-container {
+.simulador-buton-container {
     position: absolute;
     top: 20px;
     right: 20px;
@@ -190,6 +194,7 @@ ul li {
     flex-direction: column;
     align-items: flex-end; /* Alinea el botón de "Acceder por Google" debajo del botón "Simulador" */
 }
+
 
 .simulador-button {
     min-width: 150px;
@@ -212,16 +217,19 @@ ul li {
 /* Asegurarse de que el contenedor tenga `position: relative` para que el botón se posicione correctamente */
 .login-container {
     position: relative;
-    padding-top: 60px; /* Espacio superior para el título */
+    padding-top: 60px;
+    /* Espacio superior para el título */
 }
 
 .logo-ucen {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        max-width: 40vh; /* Ajusta el tamaño según sea necesario */
-        
-    }
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    max-width: 40vh;
+    /* Ajusta el tamaño según sea necesario */
+
+}
+
 /* Estilos para los cuadros de tema */
 .tema-item {
     display: flex;
@@ -229,51 +237,31 @@ ul li {
     font-size: 0.9rem;
     color: #333;
     position: absolute;
-    top: -15px; /* Ajusta la altura para colocarlo encima de la línea gris */
-    left: 50%; /* Centra el cuadro en la columna del semestre */
+    top: -15px;
+    /* Ajusta la altura para colocarlo encima de la línea gris */
+    left: 50%;
+    /* Centra el cuadro en la columna del semestre */
     transform: translateX(-50%);
-    z-index: 2; /* Coloca los cuadros sobre el fondo gris */
+    z-index: 2;
+    /* Coloca los cuadros sobre el fondo gris */
 }
-
-/* Colores de cada tema */
-.tema-color-tema-2 {
-    background-color: #007bff; /* Azul para Tema I */
-}
-
-.tema-color-tema-4 {
-    background-color: #0051a3; /* Azul oscuro para Tema II */
-}
-
-.tema-color-tema-6 {
-    background-color: #bfbfbf; /* Gris para Tema III */
-}
-
-/* General color box */
-.tema-color {
-    width: 15px;
-    height: 15px;
-    margin-right: 8px;
-    display: inline-block;
-    border-radius: 3px;
-}
-
 
 .menu-visible .main-content {
     margin-left: 310px;
     transition: margin-left 0.3s ease;
-  }
+}
 
-  .menu-open .logo-ucen {
+.menu-open .logo-ucen {
     transform: translateX(310px);
     transition: transform 0.3s ease;
-  }
-  
-  .menu-open .header {
+}
+
+.menu-open .header {
     transform: translateX(310px);
     transition: transform 0.3s ease;
-  }
-  
-  .menu-open .simulador-button,
+}
+
+.menu-open .simulador-button,
 .menu-open #signInDiv {
     transform: translateX(310px);
     transition: transform 0.3s ease;
@@ -286,8 +274,10 @@ ul li {
 
 .sidebar .close-menu-button {
     position: absolute;
-    bottom: 20px; /* Ajusta la distancia desde abajo */
-    left: 30vh; /* Ajusta la posición hacia la izquierda */
+    bottom: 20px;
+    /* Ajusta la distancia desde abajo */
+    left: 30vh;
+    /* Ajusta la posición hacia la izquierda */
     background-color: #333;
     color: #fff;
     border: none;
@@ -309,14 +299,16 @@ ul li {
 /* Añadir una clase que desplace todo el contenido a la derecha cuando el menú esté visible */
 .menu-visible .header,
 .menu-visible .malla-curricular,
-.menu-visible .simulador-container,
+.menu-visible .simulador-buton-container,
 .menu-visible .logo-ucen {
-    margin-left: 310px; /* Ajusta este valor según el ancho del menú lateral */
+    margin-left: 310px;
+    /* Ajusta este valor según el ancho del menú lateral */
     transition: margin-left 0.3s ease;
 }
 
 /* Ajustes generales para pantallas pequeñas */
 @media (max-width: 768px) {
+
     /* Ajustar el contenedor principal para pantallas pequeñas */
     .malla-curricular {
         padding: 10px;
@@ -342,13 +334,14 @@ ul li {
 
     /* Imagen del logo: reducir tamaño y centrar */
     .logo-ucen {
-        max-width: 20vh; /* Ajusta el tamaño para móvil */
+        max-width: 20vh;
+        /* Ajusta el tamaño para móvil */
         margin: 0 auto;
         display: block;
     }
 
     /* Botón Simulador: tamaño y ubicación en móviles */
-    .simulador-container {
+    .simulador {
         position: relative;
         top: 10px;
         right: 0;
@@ -395,47 +388,50 @@ ul li {
         flex-direction: column;
     }
 
-/* Sidebar escondido por defecto en pantallas pequeñas */
-.sidebar {
-    display: none; /* Escondido en dispositivos móviles inicialmente */
-}
+    /* Sidebar escondido por defecto en pantallas pequeñas */
+    .sidebar {
+        display: none;
+        /* Escondido en dispositivos móviles inicialmente */
+    }
 
-/* Mostrar el sidebar cuando está activo */
-.sidebar.visible {
-    display: block;
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: white;
-    overflow-y: auto;
-    z-index: 1000; /* Asegurarse de que esté por encima de otros elementos */
-    padding: 20px;
-}
+    /* Mostrar el sidebar cuando está activo */
+    .sidebar.visible {
+        display: block;
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100vh;
+        background-color: white;
+        overflow-y: auto;
+        z-index: 1000;
+        /* Asegurarse de que esté por encima de otros elementos */
+        padding: 20px;
+    }
 
-/* Ajuste adicional para el contenido dentro del sidebar */
-.sidebar h2,
-.sidebar p,
-.sidebar ul {
-    margin-bottom: 10px;
-}
+    /* Ajuste adicional para el contenido dentro del sidebar */
+    .sidebar h2,
+    .sidebar p,
+    .sidebar ul {
+        margin-bottom: 10px;
+    }
 
-/* Evitar que el contenido del sidebar "flote" en la pantalla */
-.malla-curricular {
-    overflow-y: auto;
-}
-
-/* Ajuste de contenido en pantallas más pequeñas */
-@media (max-width: 768px) {
+    /* Evitar que el contenido del sidebar "flote" en la pantalla */
     .malla-curricular {
-        padding-bottom: 0; /* Ajuste del espacio si el sidebar ocupa toda la pantalla */
+        overflow-y: auto;
     }
 
-    .simulador-container {
-        margin-bottom: 20px;
+    /* Ajuste de contenido en pantallas más pequeñas */
+    @media (max-width: 768px) {
+        .malla-curricular {
+            padding-bottom: 0;
+            /* Ajuste del espacio si el sidebar ocupa toda la pantalla */
+        }
+
+        .simulador-container {
+            margin-bottom: 20px;
+        }
     }
-}
 
 }
 
