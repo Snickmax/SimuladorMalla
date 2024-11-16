@@ -12,6 +12,7 @@ function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible com
         // Guardar usuario en localStorage
         localStorage.setItem('user', JSON.stringify(userObject));
 
+
         const email = userObject.email;
         if (email) {
             saveUserEmailToDatabase(email);
@@ -33,9 +34,11 @@ function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible com
     }
 
     useEffect(() => {
+        // Verificar si el usuario ya está en localStorage
         const storedUser = JSON.parse(localStorage.getItem('user'));
         if (storedUser) {
             setUser(storedUser); // Restaurar el usuario de localStorage
+            document.getElementById("signInDiv").hidden = true;
         }
 
         window.google.accounts.id.initialize({

@@ -273,7 +273,7 @@ class UsuarioViewSet(viewsets.ViewSet):
 
                 # Solo sumamos los créditos si el estado es "enCurso"
                 if estado == "enCurso":
-                    total_creditos += creditos
+                    total_creditos += int(creditos)
 
         conn.close()
         return Response({"estados": estados, "totalcreditos": total_creditos})

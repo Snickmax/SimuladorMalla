@@ -209,8 +209,8 @@ function Simulador({ user }) {
                         );
                     })}
                 </div>
-                <button className="guardar-boton" onClick={guardarAsignaturas}>Guardar</button>
             </div>
+            <button className="guardar-boton" onClick={guardarAsignaturas}>Guardar</button>
         </div>
     );
 };
