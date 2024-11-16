@@ -9,6 +9,10 @@ function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible com
         const userObject = jwtDecode(response.credential);
         setUser(userObject);
 
+        // Guardar usuario en localStorage
+        localStorage.setItem('user', JSON.stringify(userObject));
+
+
         const email = userObject.email;
         if (email) {
             saveUserEmailToDatabase(email);
@@ -25,10 +29,18 @@ function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible com
 
     function handleSignOut() {
         setUser(null);
+        localStorage.removeItem('user'); // Eliminar usuario de localStorage
         setShowGoogleSignIn(false);
     }
 
     useEffect(() => {
+        // Verificar si el usuario ya está en localStorage
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser) {
+            setUser(storedUser); // Restaurar el usuario de localStorage
+            document.getElementById("signInDiv").hidden = true;
+        }
+
         window.google.accounts.id.initialize({
             client_id: "1092419716281-mregl22qvg3k1qtgmcgg2ecaem5j2ckq.apps.googleusercontent.com",
             callback: handleCallbackResponse
