@@ -76,6 +76,7 @@ const MallaCurricular = () => {
 
   const handleCarreraChange = async (event) => {
     const carreraId = event.target.value;
+    setSelectedCarrera(carreras.find(c => c.id === carreraId))
     fetchAsignaturas(carreraId);
   };
 
@@ -228,6 +229,7 @@ const MallaCurricular = () => {
 
 
               <select onChange={handleCarreraChange}>
+                <option value="">Cambiar de Malla</option>
                 {carreras.map((carrera) => (
                   <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
                 ))}
