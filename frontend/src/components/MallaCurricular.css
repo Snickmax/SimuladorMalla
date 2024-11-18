@@ -256,7 +256,6 @@ h3 {
     /* Pequeño efecto de agrandamiento al pasar el mouse */
 }
 
-
 /* Añadir una clase que desplace todo el contenido a la derecha cuando el menú esté visible */
 
 .menu-visible .malla-curricular {
@@ -287,13 +286,8 @@ h3 {
 
 /* Ajustes generales para pantallas pequeñas */
 @media (max-width: 768px) {
-
-
-    /* Ajuste del header para que se vea centrado en móviles */
     .header {
-        align-items: flex-start;
-        text-align: left;
-        padding: 10px;
+        flex-direction: column;
     }
 
     .header h1 {
@@ -308,18 +302,10 @@ h3 {
     /* Imagen del logo: reducir tamaño y centrar */
     .logo-ucen {
         max-width: 20vh;
-        /* Ajusta el tamaño para móvil */
-        margin: 0 auto;
-        display: block;
     }
 
     /* Botón Simulador: tamaño y ubicación en móviles */
     .simulador-buton-container {
-        position: relative;
-        top: 10px;
-        right: 0;
-        display: flex;
-        justify-content: center;
         margin-top: 15px;
     }
 
@@ -328,7 +314,4 @@ h3 {
         max-width: 200px;
         margin-top: 0;
     }
-
-
-
 }
