@@ -304,8 +304,8 @@ const MallaCurricular = () => {
               <div className="malla-container">
                 {Object.keys(asignaturas).map(semestre => {
                   const asignaturasSemestre = asignaturas[semestre];
-                  const practicas = asignaturasSemestre.filter(asignatura => asignatura.nombre.includes('Práctica'));
-                  const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.nombre.includes('Práctica'));
+                  const practicas = asignaturasSemestre.filter(asignatura => asignatura.categoriaId.includes('Práctica'));
+                  const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.categoriaId.includes('Práctica'));
 
                   return (
                     <div key={semestre} className="semestre-columna">
