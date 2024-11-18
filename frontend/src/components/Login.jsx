@@ -54,14 +54,17 @@ function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible com
     return (
         <div className={`login-container ${isMenuVisible ? 'menu-open' : ''}`}>
             {/* Contenedor del botón "Simulador" y "Acceder por Google" */}
-            <div className="simulador-buton-container">
-                <button className="simulador-button" onClick={() => setShowGoogleSignIn(!showGoogleSignIn)}>Simulador</button>
+            {
+                !user && (
+                    <div className="simulador-buton-container">
+                        <button className="simulador-button" onClick={() => setShowGoogleSignIn(!showGoogleSignIn)}>Simulador</button>
 
-                {/* Botón "Acceder por Google" aparece debajo de "Simulador" */}
-                {showGoogleSignIn && (
-                    <div id="signInDiv" style={{ marginTop: '10px' }}></div>
-                )}
-            </div>
+                        {/* Botón "Acceder por Google" aparece debajo de "Simulador" */}
+                        {showGoogleSignIn && (
+                            <div id="signInDiv" style={{ marginTop: '10px' }}></div>
+                        )}
+                    </div>)
+            }
 
             {/* Información del usuario cuando está logueado */}
             {
