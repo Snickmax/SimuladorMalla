@@ -183,11 +183,36 @@ const MallaCurricular = () => {
   return (
     <div >
       {isLoading ? (
-        <div className="loading-screen">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
+        <div>
+          <div className='header'>
+            <div>
+              <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
+
+            </div>
+            <div className='informacion'>
+              <h1>Malla Interactiva <br />{selectedCarrera.nombre}</h1>
+              <h2>Facultad de Ingeniería y Arquitectura</h2>
+              <div className="form-check form-switch">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                  checked={notMenu}
+                  onChange={toggleNotMenu}
+                />
+                <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+                  {notMenu ? "Desactivar Menú" : "Activar Menú"}
+                </label>
+              </div>
+            </div>
           </div>
-          <p>Cargando datos...</p>
+          <div className="loading-screen">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p>Cargando datos...</p>
+          </div>
         </div>
       ) : (
         <div>
@@ -198,7 +223,7 @@ const MallaCurricular = () => {
 
             </div>
             <div className='informacion'>
-              <h1>Malla {selectedCarrera.nombre}</h1>
+              <h1>Malla Interactiva <br />{selectedCarrera.nombre}</h1>
               <h2>Facultad de Ingeniería y Arquitectura</h2>
 
 
