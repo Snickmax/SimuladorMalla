@@ -1,29 +1,22 @@
 .header {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    flex-direction: row;
     margin-bottom: 20px;
 }
 
 .header h1 {
-    font-size: 2rem;
     margin: 0;
 }
 
-.header h2 {
-    font-size: 1.2rem;
+.informacion h2 {
+    font-size: 1.5rem;
     font-weight: normal;
     color: #666;
     margin: 0;
-    margin-left: -46vh;
-    /* Ajusta este valor para moverlo hacia la izquierda */
 }
 
-
-.header select,
-.header .form-check {
+.informacion select,
+.informacion .form-check {
     margin-top: 10px;
 }
 
@@ -32,44 +25,13 @@
     display: flex;
     transition: margin-left 0.3s ease;
     background-color: #f0f0f0;
-    /* Fondo gris desde el botón "Activar Menú" hacia abajo */
-    padding: 20px;
-    min-height: 100vh;
-    /* Extender hasta el fondo de la pantalla */
     overflow-x: auto;
-    display: flex;
-    transition: margin-left 0.3s ease;
-    background-color: #f0f0f0;
-    padding: 20px;
     min-height: 50vh;
     /* Ocupa el 90% de la altura de la pantalla */
-}
-
-
-.sidebar {
-    width: 300px;
-    background-color: #ffffff;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: -300px;
-    transition: left 0.3s ease;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar.visible {
-    left: 0;
-}
-
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
+    position: relative;
+    /* Necesario para calcular correctamente la altura */
+    height: auto;
+    /* Basado en su contenido */
 }
 
 .malla-container {
@@ -91,7 +53,6 @@
     border: none;
     /* Quitar borde de cada semestre */
 }
-
 
 .contenido-semestre {
     display: flex;
@@ -119,7 +80,6 @@
     justify-content: space-between;
     /* Distribuye el contenido verticalmente */
 }
-
 
 .ulAsignaturas {
     display: flex;
@@ -178,21 +138,44 @@ h3 {
     white-space: nowrap;
 }
 
-ul {
-    padding-left: 20px;
+/* Enlace sin interacción */
+.lireq {
+    color: blue;
+    /* Color predeterminado del texto */
+    text-decoration: underline;
+    /* Subrayado predeterminado */
+    cursor: pointer;
 }
 
-ul li {
-    margin-bottom: 10px;
+/* Enlace visitado */
+.lireq:visited {
+    color: purple;
+    /* Cambia de color si ya fue visitado */
 }
+
+/* Enlace enfocado */
+.lireq:focus {
+    outline: 2px solid #0056b3;
+    /* Agrega un borde de enfoque */
+}
+
+/* Enlace activo */
+.lireq:active {
+    color: purple;
+    /* Cambia el color mientras está siendo pulsado */
+    text-decoration: underline;
+    /* Mantiene o cambia el subrayado */
+}
+
 /* Estilo para el botón "Simulador" en la esquina superior derecha */
 .simulador-buton-container {
     position: absolute;
-    top: 20px;
+    top: 0px;
     right: 20px;
     display: flex;
     flex-direction: column;
-    align-items: flex-end; /* Alinea el botón de "Acceder por Google" debajo del botón "Simulador" */
+    align-items: flex-end;
+    /* Alinea el botón de "Acceder por Google" debajo del botón "Simulador" */
 }
 
 
@@ -206,7 +189,8 @@ ul li {
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    margin-top: 13vh; /* Ajusta este valor para bajar el botón */
+    margin-top: 5vh;
+    /* Ajusta este valor para bajar el botón */
 }
 
 .simulador-button:hover {
@@ -217,104 +201,93 @@ ul li {
 /* Asegurarse de que el contenedor tenga `position: relative` para que el botón se posicione correctamente */
 .login-container {
     position: relative;
-    padding-top: 60px;
+    padding-top: 30px;
     /* Espacio superior para el título */
 }
 
 .logo-ucen {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    max-width: 40vh;
-    /* Ajusta el tamaño según sea necesario */
-
+    max-width: 35vh;
 }
 
-/* Estilos para los cuadros de tema */
-.tema-item {
-    display: flex;
-    align-items: center;
-    font-size: 0.9rem;
-    color: #333;
-    position: absolute;
-    top: -15px;
-    /* Ajusta la altura para colocarlo encima de la línea gris */
-    left: 50%;
-    /* Centra el cuadro en la columna del semestre */
-    transform: translateX(-50%);
-    z-index: 2;
-    /* Coloca los cuadros sobre el fondo gris */
+.sidebar {
+    width: 310px;
+    background-color: #ffffff;
+    height: auto;
+    /* Toma la altura del contenedor padre */
+    position: fixed;
+    /* Debe estar dentro del flujo del contenedor padre */
+    left: -310px;
+    /* Posición inicial fuera del contenedor */
+    transition: left 0.3s ease;
+    padding-left: 20px;
 }
 
-.menu-visible .main-content {
-    margin-left: 310px;
-    transition: margin-left 0.3s ease;
-}
 
-.menu-open .logo-ucen {
-    transform: translateX(310px);
-    transition: transform 0.3s ease;
-}
-
-.menu-open .header {
-    transform: translateX(310px);
-    transition: transform 0.3s ease;
-}
-
-.menu-open .simulador-button,
-.menu-open #signInDiv {
-    transform: translateX(310px);
-    transition: transform 0.3s ease;
-}
-
-.menu-open .login-container {
-    transform: translateX(310px);
-    transition: transform 0.3s ease;
+.sidebar.visible {
+    left: 0;
 }
 
 .sidebar .close-menu-button {
     position: absolute;
-    bottom: 20px;
-    /* Ajusta la distancia desde abajo */
-    left: 30vh;
-    /* Ajusta la posición hacia la izquierda */
+    bottom: 90px;
+    /* Ajusta según lo que necesites */
+    right: -15px;
+    /* Parte del botón sobresale del contenedor */
     background-color: #333;
     color: #fff;
     border: none;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     font-size: 1.2rem;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s ease;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 99;
+    /* Asegúrate de que esté encima del contenido */
 }
 
 .sidebar .close-menu-button:hover {
     background-color: #555;
+    transform: scale(1.1);
+    /* Pequeño efecto de agrandamiento al pasar el mouse */
 }
 
+
 /* Añadir una clase que desplace todo el contenido a la derecha cuando el menú esté visible */
-.menu-visible .header,
-.menu-visible .malla-curricular,
-.menu-visible .simulador-buton-container,
-.menu-visible .logo-ucen {
+
+.menu-visible .malla-curricular {
     margin-left: 310px;
     /* Ajusta este valor según el ancho del menú lateral */
     transition: margin-left 0.3s ease;
 }
 
+.Categoria1 {
+    background-color: #1464f6;
+    color: #fff;
+}
+
+.Categoria2 {
+    background-color: #033076;
+    color: #fff;
+}
+
+.Categoria3 {
+    background-color: #606060;
+    color: #fff;
+}
+
+.Categoria4 {
+    background-color: #d5d5d5;
+    color: #000000;
+}
+
 /* Ajustes generales para pantallas pequeñas */
 @media (max-width: 768px) {
 
-    /* Ajustar el contenedor principal para pantallas pequeñas */
-    .malla-curricular {
-        padding: 10px;
-        flex-direction: column;
-        min-height: auto;
-    }
 
     /* Ajuste del header para que se vea centrado en móviles */
     .header {
@@ -341,7 +314,7 @@ ul li {
     }
 
     /* Botón Simulador: tamaño y ubicación en móviles */
-    .simulador {
+    .simulador-buton-container {
         position: relative;
         top: 10px;
         right: 0;
@@ -356,101 +329,6 @@ ul li {
         margin-top: 0;
     }
 
-    /* Cuadraditos de tema */
-    .tema-item {
-        position: relative;
-        left: 0;
-        top: 0;
-        transform: none;
-        margin: 10px auto;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
 
-    /* Botón de cierre del menú en móvil */
-    .close-btn-mobile {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
-    }
 
-    /* Ajustar los semestres para que se ordenen en una sola columna */
-    .semestre-columna {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    .contenido-semestre {
-        flex-direction: column;
-    }
-
-    /* Sidebar escondido por defecto en pantallas pequeñas */
-    .sidebar {
-        display: none;
-        /* Escondido en dispositivos móviles inicialmente */
-    }
-
-    /* Mostrar el sidebar cuando está activo */
-    .sidebar.visible {
-        display: block;
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 100%;
-        height: 100vh;
-        background-color: white;
-        overflow-y: auto;
-        z-index: 1000;
-        /* Asegurarse de que esté por encima de otros elementos */
-        padding: 20px;
-    }
-
-    /* Ajuste adicional para el contenido dentro del sidebar */
-    .sidebar h2,
-    .sidebar p,
-    .sidebar ul {
-        margin-bottom: 10px;
-    }
-
-    /* Evitar que el contenido del sidebar "flote" en la pantalla */
-    .malla-curricular {
-        overflow-y: auto;
-    }
-
-    /* Ajuste de contenido en pantallas más pequeñas */
-    @media (max-width: 768px) {
-        .malla-curricular {
-            padding-bottom: 0;
-            /* Ajuste del espacio si el sidebar ocupa toda la pantalla */
-        }
-
-        .simulador-container {
-            margin-bottom: 20px;
-        }
-    }
-
-}
-
-.Categoria1 {
-    background-color: #1464f6;
-    color: #fff;
-}
-
-.Categoria2 {
-    background-color: #033076;
-    color: #fff;
-}
-
-.Categoria3 {
-    background-color: #606060;
-    color: #fff;
-}
-
-.Categoria4 {
-    background-color: #d5d5d5;
-    color: #000000;
 }

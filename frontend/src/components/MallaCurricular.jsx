@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import './MallaCurricular.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -12,6 +12,26 @@ const MallaCurricular = () => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [notMenu, setNotMenu] = useState(false);
 
+  const asignaturaRefs = useRef({});
+
+  useEffect(() => {
+    const updateSidebarHeight = () => {
+      const malla = document.querySelector('.malla-curricular');
+      const sidebar = document.querySelector('.sidebar');
+      if (malla && sidebar) {
+        sidebar.style.height = `${malla.offsetHeight}px`; // Ajusta la altura de la barra lateral
+      }
+    };
+
+    // Ejecuta al montar y cada vez que la ventana se redimensiona
+    updateSidebarHeight();
+    window.addEventListener('resize', updateSidebarHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateSidebarHeight);
+    };
+  }, []);
+
   useEffect(() => {
     fetchCarreras();
   }, []);
@@ -23,6 +43,7 @@ const MallaCurricular = () => {
       setCarreras(carrerasData);
 
       if (carrerasData.length > 0) {
+        setSelectedCarrera(carrerasData[0])
         fetchAsignaturas(carrerasData[0].id);
       }
     } catch (error) {
@@ -34,6 +55,13 @@ const MallaCurricular = () => {
     try {
       const response = await axios.get(`http://localhost:8000/asignaturas/?carreraId=${carreraId}`);
       const asignaturasData = response.data;
+      // Inicializar referencias para las asignaturas
+      const refs = {};
+      Object.values(asignaturasData).flat().forEach(asignatura => {
+        refs[asignatura.id] = React.createRef();
+      });
+      asignaturaRefs.current = refs;
+
       setAsignaturas(asignaturasData);
     } catch (error) {
       console.error('Error fetching carreras:', error);
@@ -67,8 +95,21 @@ const MallaCurricular = () => {
     setNotMenu(!notMenu);
     handleCloseMenu();
   };
+  const handleMouseEnterHover = (id) => {
+    // Buscar la asignatura que coincide con la id dada
+    const asignatura = Object.values(asignaturas).flat().find(asignatura => asignatura.id === id);
+
+    // Si la asignatura es encontrada, actualizar el estado de hoveredAsignatura
+    if (asignatura) {
+      setHoveredAsignatura(asignatura);
+    }
+  };
+
 
   const getBackgroundStyle = (asignatura) => {
+    if (hoveredAsignatura && hoveredAsignatura.id === asignatura.id) {
+      return { backgroundColor: '#ff6624', color: '#fff' }; // Color para el hover de la asignatura misma
+    }
     if (
       hoveredAsignatura &&
       hoveredAsignatura.prerrequisitos.some(
@@ -126,110 +167,148 @@ const MallaCurricular = () => {
     return resultado;
   }
 
+  const handlePrerrequisitoClick = (prerrequisitoId) => {
+    const ref = asignaturaRefs.current[prerrequisitoId];
+    if (ref) {
+      ref.current.click(); // Simula el clic en la asignatura correspondiente
+    }
+  };
+
   return (
-    <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>
+    <div >
       <div className='header'>
-        <h1>Malla Ingeniería Civil en Computación e Informática</h1>
-        <h2>Facultad de Ingeniería y Arquitectura</h2>
+        <div>
+          <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
 
-        <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" /> 
+        </div>
+        <div className='informacion'>
+          <h1>Malla {selectedCarrera.nombre}</h1>
+          <h2>Facultad de Ingeniería y Arquitectura</h2>
 
-        <select onChange={handleCarreraChange}>
-          {carreras.map((carrera) => (
-            <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
-          ))}
-        </select>
 
-        <div className="form-check form-switch">
-          <input
-            className="form-check-input"
-            type="checkbox"
-            role="switch"
-            id="flexSwitchCheckDefault"
-            checked={notMenu}
-            onChange={toggleNotMenu}
-          />
-          <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
-            {notMenu ? "Desactivar Menú" : "Activar Menú"}
-          </label>
+          <select onChange={handleCarreraChange}>
+            {carreras.map((carrera) => (
+              <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
+            ))}
+          </select>
+
+          <div className="form-check form-switch">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="flexSwitchCheckDefault"
+              checked={notMenu}
+              onChange={toggleNotMenu}
+            />
+            <label className="form-check-label" htmlFor="flexSwitchCheckDefault">
+              {notMenu ? "Desactivar Menú" : "Activar Menú"}
+            </label>
+          </div>
         </div>
       </div>
+      <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>
 
-      <div className='malla-curricular'>
-        <div className="malla-container">
-          {Object.keys(asignaturas).map(semestre => {
-            const asignaturasSemestre = asignaturas[semestre];
-            const practicas = asignaturasSemestre.filter(asignatura => asignatura.nombre.includes('Práctica'));
-            const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.nombre.includes('Práctica'));
+        <div className='malla-curricular'>
+          <div className={`sidebar ${isMenuVisible ? 'visible' : ''}`}>
+            <h2>{selectedAsignatura?.nombre}</h2>
+            <h2>({selectedAsignatura?.creditos} créditos)</h2>
+            <p><strong>Descripción:</strong> <br />{selectedAsignatura?.descripcion}</p>
+            <p><strong>Requisitos:</strong></p>
+            <ul>
+              {selectedAsignatura?.prerrequisitos && selectedAsignatura.prerrequisitos.length > 0 ? (
+                selectedAsignatura.prerrequisitos.map(prer => (
+                  <li key={prer.id}
+                    className='lireq'
+                    onClick={() => handlePrerrequisitoClick(prer.id)}
+                    onMouseEnter={() => handleMouseEnterHover(prer.id)}
+                    onMouseLeave={handleMouseLeave}>
+                    {prer.nombre}
+                  </li>
+                ))
+              ) : (
+                <li>
+                  <strong>Admision</strong>
+                </li>
+              )}
+            </ul>
+            {selectedAsignatura?.postrequisitos && selectedAsignatura.postrequisitos.length > 0 ? (
+              <div>
+                <p><strong>Abre:</strong></p>
+                <ul>
+                  {selectedAsignatura.postrequisitos.map(post => (
 
-            return (
-              <div key={semestre} className="semestre-columna">
-                <h3>{enteroARomano(semestre)} SEMESTRE</h3>
-                <div className="contenido-semestre">
-                  {practicas.length > 0 && (
-                    <div className="practica-columna">
-                      {practicas.map(practica => (
-                        <div className='ulPracticas'
-                          key={practica.id}
-                          onClick={notMenu ? () => handleAsignaturaClick(practica) : () => { }}
-                          onMouseEnter={() => handleMouseEnter(practica)}
-                          onMouseLeave={handleMouseLeave}
-                          style={{ ...getBackgroundStyle(practica), ...getDiffuseStyle(practica) }}>
+                    <li key={post.id}
+                      className='lireq'
+                      onMouseEnter={() => handleMouseEnterHover(post.id)}
+                      onClick={() => handlePrerrequisitoClick(post.id)}
+                      onMouseLeave={handleMouseLeave}>
+                      {post.nombre}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div></div>
+            )}
 
-                          <div className='ilPracticas' style={getBackgroundStyle(practica)}>
-                            {practica.nombre}
+
+            {/* Botón para cerrar el menú en la parte inferior */}
+            {isMenuVisible && (
+              <button className="close-menu-button" onClick={handleCloseMenu}>❮</button>
+            )}
+          </div>
+          <div className="malla-container">
+            {Object.keys(asignaturas).map(semestre => {
+              const asignaturasSemestre = asignaturas[semestre];
+              const practicas = asignaturasSemestre.filter(asignatura => asignatura.nombre.includes('Práctica'));
+              const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.nombre.includes('Práctica'));
+
+              return (
+                <div key={semestre} className="semestre-columna">
+                  <h3>{enteroARomano(semestre)} SEMESTRE</h3>
+                  <div className="contenido-semestre">
+                    {practicas.length > 0 && (
+                      <div className="practica-columna">
+                        {practicas.map(practica => (
+                          <div className='ulPracticas'
+                            key={practica.id}
+                            ref={asignaturaRefs.current[practica.id]}
+                            onClick={notMenu ? () => handleAsignaturaClick(practica) : () => { }}
+                            onMouseEnter={() => handleMouseEnter(practica)}
+                            onMouseLeave={handleMouseLeave}
+                            style={{ ...getBackgroundStyle(practica), ...getDiffuseStyle(practica) }}>
+
+                            <div className='ilPracticas' style={getBackgroundStyle(practica)}>
+                              {practica.nombre}
+                            </div>
                           </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className='ulAsignaturas'>
+                      {asignaturasSinPracticas.map(asignatura => (
+                        <div
+                          key={asignatura.id}
+                          ref={asignaturaRefs.current[asignatura.id]}
+                          className={`cuadro ilAsignaturas ${asignatura.categoriaId}`}
+                          onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => { }}
+                          onMouseEnter={() => handleMouseEnter(asignatura)}
+                          onMouseLeave={handleMouseLeave}
+                          style={{
+                            ...getBackgroundStyle(asignatura),
+                            ...getDiffuseStyle(asignatura),
+                          }}
+                        >
+                          {asignatura.nombre}
                         </div>
                       ))}
                     </div>
-                  )}
-                  <div className='ulAsignaturas'>
-                    {asignaturasSinPracticas.map(asignatura => (
-                      <div
-                        key={asignatura.id}
-                        className={`cuadro ilAsignaturas ${asignatura.categoriaId}`}
-                        onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => { }}
-                        onMouseEnter={() => handleMouseEnter(asignatura)}
-                        onMouseLeave={handleMouseLeave}
-                        style={{
-                          ...getBackgroundStyle(asignatura),
-                          ...getDiffuseStyle(asignatura),
-                        }}
-                      >
-                        {asignatura.nombre}
-                      </div>
-                    ))}
                   </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className={`sidebar ${isMenuVisible ? 'visible' : ''}`}>
-          <h2>{selectedAsignatura?.nombre} ({selectedAsignatura?.creditos} créditos)</h2>
-          <p><strong>Descripción:</strong> {selectedAsignatura?.descripcion}</p>
-          <p><strong>Prerrequisitos:</strong></p>
-          <ul>
-            {selectedAsignatura?.prerrequisitos?.map(prer => (
-              <li key={prer.id}>
-                {prer.nombre} ({prer.creditos} créditos)
-              </li>
-            ))}
-          </ul>
-          <p><strong>Postrequisitos:</strong></p>
-          <ul>
-            {selectedAsignatura?.postrequisitos?.map(post => (
-              <li key={post.id}>
-                {post.nombre} ({post.creditos} créditos)
-              </li>
-            ))}
-          </ul>
-
-          {/* Botón para cerrar el menú en la parte inferior */}
-          {isMenuVisible && (
-            <button className="close-menu-button" onClick={handleCloseMenu}>❮</button>
-          )}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
