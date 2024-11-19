@@ -181,6 +181,15 @@ const MallaCurricular = () => {
     }
   };
 
+  const categoriasUnicas = Object.values(asignaturas)
+    .flat() // Aplana las asignaturas por semestre
+    .reduce((categorias, asignatura) => {
+      if (!categorias.some(c => c.id === asignatura.categoriaId)) {
+        categorias.push({ id: asignatura.categoriaId, nombre: asignatura.categoriaNombre });
+      }
+      return categorias;
+    }, []);
+
   return (
     <div >
       {isLoading ? (
@@ -188,7 +197,6 @@ const MallaCurricular = () => {
           <div className='header'>
             <div>
               <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
-
             </div>
             <div className='informacion'>
               <h1>Malla Interactiva <br />{selectedCarrera.nombre}</h1>
@@ -208,6 +216,52 @@ const MallaCurricular = () => {
               </div>
             </div>
           </div>
+          <div className="leyenda">
+              <div className='leyendas'>
+                <h3>Leyenda de Requisitos</h3>
+                <div className="leyenda-fila">
+                  <div className="leyenda-item">
+                    <div
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        marginRight: '8px',
+                        borderRadius: '4px',
+                        backgroundColor: '#ff8a84',
+                        border: '1px solid #000000',
+                      }}
+                    ></div>
+                    <span>Requisito</span>
+                  </div>
+                  <div className="leyenda-item">
+                    <div
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        marginRight: '8px',
+                        borderRadius: '4px',
+                        backgroundColor: '#ff6624',
+                        border: '1px solid #000000',
+                      }}
+                    ></div>
+                    <span>Seleccionado</span>
+                  </div>
+                  <div className="leyenda-item">
+                    <div
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        marginRight: '8px',
+                        borderRadius: '4px',
+                        backgroundColor: '#af3a11',
+                        border: '1px solid #000000',
+                      }}
+                    ></div>
+                    <span>Abre</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           <div className="loading-screen">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
@@ -217,24 +271,19 @@ const MallaCurricular = () => {
         </div>
       ) : (
         <div>
-
           <div className='header'>
             <div>
               <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
-
             </div>
             <div className='informacion'>
               <h1>Malla Interactiva <br />{selectedCarrera.nombre}</h1>
               <h2>Facultad de Ingeniería y Arquitectura</h2>
-
-
               <select onChange={handleCarreraChange}>
                 <option value="">Cambiar de Malla</option>
                 {carreras.map((carrera) => (
                   <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
                 ))}
               </select>
-
               <div className="form-check form-switch">
                 <input
                   className="form-check-input"
@@ -250,8 +299,74 @@ const MallaCurricular = () => {
               </div>
             </div>
           </div>
-          <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>
 
+          <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>
+            <div className="leyenda">
+              <div className='leyendas'>
+                <h3>Leyenda de Categorías</h3>
+                <div className="leyenda-fila">
+                  {categoriasUnicas.map((categoria) => (
+                    <div key={categoria.id} className="leyenda-item">
+                      <div
+                        className={`${categoria.id}`}
+                        style={{
+                          width: '20px',
+                          height: '20px',
+                          marginRight: '8px',
+                          borderRadius: '4px',
+                          border: '1px solid #000000',
+                        }}
+                      ></div>
+                      <span>{categoria.nombre}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className='leyendas'>
+                <h3>Leyenda de Requisitos</h3>
+                <div className="leyenda-fila">
+                  <div className="leyenda-item">
+                    <div
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        marginRight: '8px',
+                        borderRadius: '4px',
+                        backgroundColor: '#ff8a84',
+                        border: '1px solid #000000',
+                      }}
+                    ></div>
+                    <span>Requisito</span>
+                  </div>
+                  <div className="leyenda-item">
+                    <div
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        marginRight: '8px',
+                        borderRadius: '4px',
+                        backgroundColor: '#ff6624',
+                        border: '1px solid #000000',
+                      }}
+                    ></div>
+                    <span>Seleccionado</span>
+                  </div>
+                  <div className="leyenda-item">
+                    <div
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        marginRight: '8px',
+                        borderRadius: '4px',
+                        backgroundColor: '#af3a11',
+                        border: '1px solid #000000',
+                      }}
+                    ></div>
+                    <span>Abre</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className='malla-curricular'>
               <div className={`sidebar ${isMenuVisible ? 'visible' : ''}`}>
                 <h2>{selectedAsignatura?.nombre}</h2>

@@ -1,7 +1,6 @@
 .header {
     display: flex;
     flex-direction: row;
-    margin-bottom: 20px;
 }
 
 .header h1 {
@@ -284,6 +283,11 @@ h3 {
     color: #000000;
 }
 
+.Práctica {
+    border-color: #000000;
+    background-color: white;
+}
+
 .loading-screen {
     display: flex;
     flex-direction: column;
@@ -302,6 +306,45 @@ h3 {
     margin-top: 1rem;
     font-size: 1.2rem;
     color: #555;
+}
+
+.leyenda {
+    justify-content: center;
+    flex-direction: row;
+    display: flex;
+}
+
+.leyendas {
+    margin: 16px;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.leyenda h3 {
+    margin-bottom: 8px;
+}
+
+.leyenda-fila {
+    display: flex;
+    /* Alinea los elementos en fila */
+    gap: 16px;
+    /* Espaciado entre elementos */
+    align-items: center;
+    /* Alineación vertical */
+    flex-wrap: wrap;
+    /* Permite que los elementos pasen a una nueva línea si es necesario */
+}
+
+.leyenda-item {
+    display: flex;
+    align-items: center;
+}
+
+.leyenda-item span {
+    margin-left: 8px;
+    font-size: 14px;
 }
 
 /* Ajustes generales para pantallas pequeñas */
