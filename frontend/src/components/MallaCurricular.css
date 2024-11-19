@@ -29,6 +29,7 @@
     /* Ocupa el 90% de la altura de la pantalla */
     position: relative;
     /* Necesario para calcular correctamente la altura */
+    width: 100%;
     height: auto;
     /* Basado en su contenido */
 }
@@ -208,23 +209,21 @@ h3 {
     max-width: 35vh;
 }
 
+.container-malla {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
 .sidebar {
-    width: 310px;
+    position: relative;
+    width: 300px;  /* Ancho de la sidebar */
+    height: auto;  /* Altura se adapta al contenido */
     background-color: #ffffff;
-    height: auto;
-    /* Toma la altura del contenedor padre */
-    position: fixed;
-    /* Debe estar dentro del flujo del contenedor padre */
-    left: -310px;
-    /* Posición inicial fuera del contenedor */
-    transition: left 0.3s ease;
-    padding-left: 20px;
-}
-
-
-.sidebar.visible {
-    left: 0;
-}
+    padding: 20px;
+    margin-left: -300px; /* Empuja la sidebar fuera de la pantalla */
+    transition: margin-left 0.3s ease;  /* Transición suave para abrir/cerrar */
+  }
 
 .sidebar .close-menu-button {
     position: absolute;
@@ -255,10 +254,16 @@ h3 {
     /* Pequeño efecto de agrandamiento al pasar el mouse */
 }
 
+.sidebar.visible {
+  margin-left: 0;  /* Muestra la sidebar */
+}
+
+.sidebar.hidden {
+  margin-left: -300px;  /* La oculta fuera de la pantalla */
+}
 /* Añadir una clase que desplace todo el contenido a la derecha cuando el menú esté visible */
 
 .menu-visible .malla-curricular {
-    margin-left: 310px;
     /* Ajusta este valor según el ancho del menú lateral */
     transition: margin-left 0.3s ease;
 }
@@ -312,6 +317,7 @@ h3 {
     justify-content: center;
     flex-direction: row;
     display: flex;
+    flex-wrap: wrap;
 }
 
 .leyendas {

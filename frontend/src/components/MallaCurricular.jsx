@@ -16,24 +16,6 @@ const MallaCurricular = () => {
   const asignaturaRefs = useRef({});
 
   useEffect(() => {
-    const updateSidebarHeight = () => {
-      const malla = document.querySelector('.malla-curricular');
-      const sidebar = document.querySelector('.sidebar');
-      if (malla && sidebar) {
-        sidebar.style.height = `${malla.offsetHeight}px`; // Ajusta la altura de la barra lateral
-      }
-    };
-
-    // Ejecuta al montar y cada vez que la ventana se redimensiona
-    updateSidebarHeight();
-    window.addEventListener('resize', updateSidebarHeight);
-
-    return () => {
-      window.removeEventListener('resize', updateSidebarHeight);
-    };
-  }, []);
-
-  useEffect(() => {
     fetchCarreras();
   }, []);
 
@@ -217,51 +199,51 @@ const MallaCurricular = () => {
             </div>
           </div>
           <div className="leyenda">
-              <div className='leyendas'>
-                <h3>Leyenda de Requisitos</h3>
-                <div className="leyenda-fila">
-                  <div className="leyenda-item">
-                    <div
-                      style={{
-                        width: '20px',
-                        height: '20px',
-                        marginRight: '8px',
-                        borderRadius: '4px',
-                        backgroundColor: '#ff8a84',
-                        border: '1px solid #000000',
-                      }}
-                    ></div>
-                    <span>Requisito</span>
-                  </div>
-                  <div className="leyenda-item">
-                    <div
-                      style={{
-                        width: '20px',
-                        height: '20px',
-                        marginRight: '8px',
-                        borderRadius: '4px',
-                        backgroundColor: '#ff6624',
-                        border: '1px solid #000000',
-                      }}
-                    ></div>
-                    <span>Seleccionado</span>
-                  </div>
-                  <div className="leyenda-item">
-                    <div
-                      style={{
-                        width: '20px',
-                        height: '20px',
-                        marginRight: '8px',
-                        borderRadius: '4px',
-                        backgroundColor: '#af3a11',
-                        border: '1px solid #000000',
-                      }}
-                    ></div>
-                    <span>Abre</span>
-                  </div>
+            <div className='leyendas'>
+              <h3>Leyenda de Requisitos</h3>
+              <div className="leyenda-fila">
+                <div className="leyenda-item">
+                  <div
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      marginRight: '8px',
+                      borderRadius: '4px',
+                      backgroundColor: '#ff8a84',
+                      border: '1px solid #000000',
+                    }}
+                  ></div>
+                  <span>Requisito</span>
+                </div>
+                <div className="leyenda-item">
+                  <div
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      marginRight: '8px',
+                      borderRadius: '4px',
+                      backgroundColor: '#ff6624',
+                      border: '1px solid #000000',
+                    }}
+                  ></div>
+                  <span>Seleccionado</span>
+                </div>
+                <div className="leyenda-item">
+                  <div
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      marginRight: '8px',
+                      borderRadius: '4px',
+                      backgroundColor: '#af3a11',
+                      border: '1px solid #000000',
+                    }}
+                  ></div>
+                  <span>Abre</span>
                 </div>
               </div>
             </div>
+          </div>
           <div className="loading-screen">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
@@ -367,10 +349,9 @@ const MallaCurricular = () => {
                 </div>
               </div>
             </div>
-            <div className='malla-curricular'>
-              <div className={`sidebar ${isMenuVisible ? 'visible' : ''}`}>
+            <div className='container-malla'>
+              <div className={`sidebar ${isMenuVisible ? 'visible' : 'hidden'}`}>
                 <h2>{selectedAsignatura?.nombre}</h2>
-                <h2>({selectedAsignatura?.creditos} créditos)</h2>
                 <p><strong>Descripción:</strong> <br />{selectedAsignatura?.descripcion}</p>
                 <p><strong>Requisitos:</strong></p>
                 <ul>
@@ -416,56 +397,58 @@ const MallaCurricular = () => {
                   <button className="close-menu-button" onClick={handleCloseMenu}>❮</button>
                 )}
               </div>
-              <div className="malla-container">
-                {Object.keys(asignaturas).map(semestre => {
-                  const asignaturasSemestre = asignaturas[semestre];
-                  const practicas = asignaturasSemestre.filter(asignatura => asignatura.categoriaId.includes('Práctica'));
-                  const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.categoriaId.includes('Práctica'));
+              <div className='malla-curricular'>
+                <div className="malla-container">
+                  {Object.keys(asignaturas).map(semestre => {
+                    const asignaturasSemestre = asignaturas[semestre];
+                    const practicas = asignaturasSemestre.filter(asignatura => asignatura.categoriaId.includes('Práctica'));
+                    const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.categoriaId.includes('Práctica'));
 
-                  return (
-                    <div key={semestre} className="semestre-columna">
-                      <h3>{enteroARomano(semestre)} SEMESTRE</h3>
-                      <div className="contenido-semestre">
-                        {practicas.length > 0 && (
-                          <div className="practica-columna">
-                            {practicas.map(practica => (
-                              <div className='ulPracticas'
-                                key={practica.id}
-                                ref={asignaturaRefs.current[practica.id]}
-                                onClick={notMenu ? () => handleAsignaturaClick(practica) : () => { }}
-                                onMouseEnter={() => handleMouseEnter(practica)}
-                                onMouseLeave={handleMouseLeave}
-                                style={{ ...getBackgroundStyle(practica), ...getDiffuseStyle(practica) }}>
+                    return (
+                      <div key={semestre} className="semestre-columna">
+                        <h3>{enteroARomano(semestre)} SEMESTRE</h3>
+                        <div className="contenido-semestre">
+                          {practicas.length > 0 && (
+                            <div className="practica-columna">
+                              {practicas.map(practica => (
+                                <div className='ulPracticas'
+                                  key={practica.id}
+                                  ref={asignaturaRefs.current[practica.id]}
+                                  onClick={notMenu ? () => handleAsignaturaClick(practica) : () => { }}
+                                  onMouseEnter={() => handleMouseEnter(practica)}
+                                  onMouseLeave={handleMouseLeave}
+                                  style={{ ...getBackgroundStyle(practica), ...getDiffuseStyle(practica) }}>
 
-                                <div className='ilPracticas' style={getBackgroundStyle(practica)}>
-                                  {practica.nombre}
+                                  <div className='ilPracticas' style={getBackgroundStyle(practica)}>
+                                    {practica.nombre}
+                                  </div>
                                 </div>
+                              ))}
+                            </div>
+                          )}
+                          <div className='ulAsignaturas'>
+                            {asignaturasSinPracticas.map(asignatura => (
+                              <div
+                                key={asignatura.id}
+                                ref={asignaturaRefs.current[asignatura.id]}
+                                className={`cuadro ilAsignaturas ${asignatura.categoriaId}`}
+                                onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => { }}
+                                onMouseEnter={() => handleMouseEnter(asignatura)}
+                                onMouseLeave={handleMouseLeave}
+                                style={{
+                                  ...getBackgroundStyle(asignatura),
+                                  ...getDiffuseStyle(asignatura),
+                                }}
+                              >
+                                {asignatura.nombre}
                               </div>
                             ))}
                           </div>
-                        )}
-                        <div className='ulAsignaturas'>
-                          {asignaturasSinPracticas.map(asignatura => (
-                            <div
-                              key={asignatura.id}
-                              ref={asignaturaRefs.current[asignatura.id]}
-                              className={`cuadro ilAsignaturas ${asignatura.categoriaId}`}
-                              onClick={notMenu ? () => handleAsignaturaClick(asignatura) : () => { }}
-                              onMouseEnter={() => handleMouseEnter(asignatura)}
-                              onMouseLeave={handleMouseLeave}
-                              style={{
-                                ...getBackgroundStyle(asignatura),
-                                ...getDiffuseStyle(asignatura),
-                              }}
-                            >
-                              {asignatura.nombre}
-                            </div>
-                          ))}
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
