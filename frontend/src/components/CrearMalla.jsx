@@ -38,11 +38,18 @@ const CrearMalla = () => {
             // Mapeo para las categorías
             const categoriasMap = {};
 
+            if (!categoriasMap['Práctica']) {
+                categoriasMap['Práctica'] = {
+                    id: 'Práctica',
+                    nombre: 'Práctica' 
+                };
+            }
             // Convertir los semestres y asignaturas en un formato adecuado
             const formattedSemestres = Object.entries(data).map(([semestre, asignaturas]) => ({
                 id: Number(semestre),
                 asignaturas: asignaturas.map(asignatura => {
                     // Manejo de categorías sin duplicados
+
                     if (!categoriasMap[asignatura.categoriaId]) {
                         categoriasMap[asignatura.categoriaId] = {
                             id: asignatura.categoriaId,

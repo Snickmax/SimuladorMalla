@@ -40,8 +40,8 @@
 }
 
 .semestre-columna {
-    margin: 4px;
-    padding: 10px;
+    margin-left: 4px;
+    padding-left: 5px;
     /* Borde para cada columna */
     border-radius: 5px;
     /* Fondo claro para las columnas */
@@ -121,7 +121,7 @@
 
 .cuadro {
     min-width: 150px;
-    min-height: 60px;
+    min-height: 100px;
     align-content: center;
     padding: 10px;
     border: 1px solid #000000;
