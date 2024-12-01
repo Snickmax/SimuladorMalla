@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Simulador.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
 
 function Simulador({ user }) {
     const [asignaturas, setAsignaturas] = useState({});
@@ -10,46 +10,88 @@ function Simulador({ user }) {
     const [selectedCarrera, setSelectedCarrera] = useState('');
     const [estadoAsignaturas, setEstadoAsignaturas] = useState({});
     const [creditosSeleccionados, setCreditosSeleccionados] = useState(0);
+    const [showModal, setShowModal] = useState(false);  // Modal visible por defecto
+    const [isCarreraCargada, setIsCarreraCargada] = useState(false); // Para controlar la carga inicial
 
-    useEffect(() => {
-        const fetchCarreras = async () => {
+
+     // Cargar las carreras disponibles cuando el componente se monta
+     useEffect(() => {
+        const cargarCarreras = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/carreras/');
+                const response = await axios.get('http://localhost:8000/carreras');
                 setCarreras(response.data);
-                const response1 = await axios.get(`http://localhost:8000/asignaturas/?carreraId=${response.data[0]['id']}`);
-                setAsignaturas(response1.data);
-
-                const response2 = await axios.get(`http://localhost:8000/obtener-estados/?email=${user.email}`);
-                console.log(response2);
-                setEstadoAsignaturas(response2.data.estados);
-                setCreditosSeleccionados(response2.data.totalcreditos);
             } catch (error) {
-                console.error('Error fetching carreras:', error);
+                console.error('Error al cargar las carreras:', error);
             }
         };
 
-        fetchCarreras();
+        cargarCarreras();
     }, []);
 
-    const handleCarreraChange = async (e) => {
-        const carreraId = e.target.value;
-        setSelectedCarrera(carreraId);
-
-        if (carreraId) {
+    // Verificar si el usuario ya tiene una carrera asignada
+    useEffect(() => {
+        const verificarCarrera = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/asignaturas/?carreraId=${carreraId}`);
-                setAsignaturas(response.data);
-                setEstadoAsignaturas({});
-                setCreditosSeleccionados(0);
+                const response = await axios.get(`http://localhost:8000/usuario-carrera?email=${user.email}`);
+
+                if (response.data && response.data.carrera) {
+                    setIsCarreraCargada(true);
+                    // Llamar a la API para obtener las asignaturas relacionadas a la carrera
+                    obtenerAsignaturas(response.data.carrera.id);
+                } else {
+                    setIsCarreraCargada(false);
+                    setShowModal(true); // Mostrar el modal si no tiene carrera asociada
+                }
             } catch (error) {
-                console.error('Error fetching asignaturas:', error);
+                console.error('Error al verificar la carrera:', error);
             }
-        } else {
-            setAsignaturas({});
-            setEstadoAsignaturas({});
-            setCreditosSeleccionados(0);
+        };
+
+        verificarCarrera();
+    }, [user.email]);
+
+    // Obtener las asignaturas para la carrera seleccionada
+    const obtenerAsignaturas = async (carreraId) => {
+        try {
+            const response = await axios.get(`http://localhost:8000/asignaturas?carreraId=${carreraId}`);
+            setAsignaturas(response.data);
+        } catch (error) {
+            console.error('Error al obtener las asignaturas:', error);
         }
     };
+
+    const handleCarreraChange = (e) => {
+        setSelectedCarrera(e.target.value);
+    };
+
+    const handleCloseModal = async () => {
+        if (!selectedCarrera) return;
+
+        try {
+            await axios.post('http://localhost:8000/asociar-usuario-carrera/', {
+                email: user.email,
+                carrera_id: selectedCarrera,
+            });
+            setIsCarreraCargada(true); // Ahora el usuario tiene una carrera asociada
+            setShowModal(false); // Cerrar el modal
+            obtenerAsignaturas(selectedCarrera); // Obtener las asignaturas después de asociar la carrera
+        } catch (error) {
+            console.error('Error al asociar carrera:', error);
+        }
+    };
+
+    useEffect(() => {
+        const obtenerEstados = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/obtener-estados/?email=${user.email}`);
+                setEstadoAsignaturas(response.data.estados); // Establece los estados de las asignaturas
+            } catch (error) {
+                console.error('Error al obtener los estados de las asignaturas:', error);
+            }
+        };
+
+        obtenerEstados(); // Llama a la función para obtener los estados
+    }, [user.email]); // Dependencia de `user.email`
 
     const handleAsignaturaClick = (asignatura) => {
         if (!user) {
@@ -69,8 +111,8 @@ function Simulador({ user }) {
         let nuevoEstado;
 
         if (currentEstado === 'noCursado') {
-            if (creditosSeleccionados + Number(asignatura.creditos) > 30) {
-                alert("No puedes seleccionar más de 30 créditos.");
+            if (creditosSeleccionados + Number(asignatura.creditos) > 31) {
+                alert("No puedes seleccionar más de 31 créditos.");
                 return;
             }
             nuevoEstado = 'enCurso';
@@ -144,13 +186,41 @@ function Simulador({ user }) {
     return (
         <div>
             <div className='header'>
-                <h1>Simulador de Avance</h1>
+    <h1>Simulador de Avance</h1>
+    {/* Modal para seleccionar la carrera */}
+    {!isCarreraCargada && (
+        <Modal
+            show={showModal}
+            onHide={() => {}}
+            centered
+            backdrop="static"  // Hace que no se pueda cerrar al hacer clic fuera del modal
+            keyboard={false}  // Desactiva el cierre con la tecla Escape
+        >
+            <Modal.Header>
+                <Modal.Title>Selecciona tu Carrera</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
                 <select value={selectedCarrera} onChange={handleCarreraChange}>
+                    <option value="">Selecciona una carrera</option>
                     {carreras.map((carrera) => (
-                        <option key={carrera.id} value={carrera.id}>{carrera.nombre}</option>
+                        <option key={carrera.id} value={carrera.id}>
+                            {carrera.nombre}
+                        </option>
                     ))}
                 </select>
-            </div>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button
+                    variant="primary"
+                    onClick={handleCloseModal}
+                    disabled={!selectedCarrera} // Deshabilitar hasta que se seleccione una carrera
+                >
+                    Confirmar
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    )}
+</div>
             <p>Créditos seleccionados: {creditosSeleccionados}</p>
 
             <div className='simulador'>
@@ -210,7 +280,9 @@ function Simulador({ user }) {
                     })}
                 </div>
             </div>
-            <button className="guardar-boton" onClick={guardarAsignaturas}>Guardar</button>
+            <div className="guardar">
+                <button onClick={guardarAsignaturas}>Guardar Avance</button>
+            </div>
         </div>
     );
 };

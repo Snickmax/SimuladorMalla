@@ -186,6 +186,84 @@ class UsuarioViewSet(viewsets.ViewSet):
 
         conn.close()
         return Response({"message": "Usuario creado exitosamente"}, status=status.HTTP_201_CREATED)
+    
+    def create_usuario_carrera(self, request):
+        email = request.data.get('email')
+        carrera_id = request.data.get('carrera_id')
+
+        if not email or not carrera_id:
+            return Response({"error": "Los campos 'email' y 'carrera_id' son obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
+
+        conn = Neo4jConnection()
+        with conn.driver.session() as session:
+            # Verificar si el usuario ya existe
+            existing_user = session.run(
+                """
+                MATCH (u:Usuario {email: $email})
+                RETURN u
+                """,
+                email=email
+            ).single()
+
+            if not existing_user:
+                return Response({"error": "El usuario no existe"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Verificar si la relación entre el usuario y la carrera ya existe
+            existing_relation = session.run(
+                """
+                MATCH (u:Usuario {email: $email})-[:ESTUDIA]->(c:Carrera {id: $carrera_id})
+                RETURN u, c
+                """,
+                email=email,
+                carrera_id=carrera_id
+            ).single()
+
+            if existing_relation:
+                return Response({"message": "El usuario ya está asociado con esta carrera"}, status=status.HTTP_409_CONFLICT)
+
+            # Crear la relación entre el usuario y la carrera
+            session.run(
+                """
+                MATCH (u:Usuario {email: $email}), (c:Carrera {id: $carrera_id})
+                CREATE (u)-[:ESTUDIA]->(c)
+                """,
+                email=email,
+                carrera_id=carrera_id
+            )
+
+        conn.close()
+        return Response({"message": "Relación Usuario-Carrera creada exitosamente"}, status=status.HTTP_201_CREATED)
+
+    def get_usuario_carrera(self, request):
+        email = request.query_params.get('email')
+
+        if not email:
+            return Response({"error": "El campo 'email' es obligatorio"}, status=status.HTTP_400_BAD_REQUEST)
+
+        conn = Neo4jConnection()
+        with conn.driver.session() as session:
+            # Buscar la carrera asociada al usuario
+            result = session.run(
+                """
+                MATCH (u:Usuario {email: $email})-[:ESTUDIA]->(c:Carrera)
+                RETURN c.id AS carrera_id, c.nombre AS carrera_nombre
+                """,
+                email=email
+            ).single()
+
+        conn.close()
+
+        if not result:
+            # Usuario no tiene una carrera asociada
+            return Response({"carrera": None}, status=status.HTTP_200_OK)
+
+        # Usuario tiene una carrera asociada
+        carrera = {
+            "id": result["carrera_id"],
+            "nombre": result["carrera_nombre"]
+        }
+        return Response({"carrera": carrera}, status=status.HTTP_200_OK)
+
 
     def guardar_asignaturas(self, request):
         email = request.data.get('email')
