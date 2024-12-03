@@ -1,21 +1,17 @@
 .simulador {
     overflow-x: auto;
     display: flex;
-    transition: margin-left 0.3s ease;
-    background-color: #f0f0f0; /* Fondo gris desde el botón "Activar Menú" hacia abajo */
-    padding: 20px;
-    min-height: 100vh; /* Extender hasta el fondo de la pantalla */
-    overflow-x: auto;
-    display: flex;
-    transition: margin-left 0.3s ease;
+    flex-direction: column; /* Asegura que todo esté alineado verticalmente */
     background-color: #f0f0f0;
-    padding: 20px;
-    min-height: 50vh; /* Ocupa el 90% de la altura de la pantalla */
+    padding: 1%; /* Ajuste relativo */
+    min-height: 100vh;
+    margin-top: 2%; /* Ajustado para mayor coherencia */
 }
 
 .simulador-container {
     display: flex;
     flex-wrap: nowrap;
+    justify-content: space-around; /* Alinea semestres uniformemente */
 }
 
 .ulAsignatura {
@@ -39,23 +35,327 @@
     display: flex;
     width: 100%;
     transform: rotate(90deg);
-    color: #000000;
+    color: #c9c9c9;
     white-space: nowrap;
+    user-select: none;
 }
 
 .ilAsignatura {
     text-align: center;
-    padding: 5px;
-    color: #555;
+    padding: 5%; /* Ajuste relativo */
+    color: #c9c9c9;
+    user-select: none;
 }
 
-/* Ajustes de interacción y simulación */
+/* Hover para asignaturas */
 .cuadro:hover {
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
+/* Hover para prácticas */
 .ulPractica:hover {
     cursor: pointer;
     transition: background-color 0.2s;
+}
+
+/* Logo */
+.logo {
+    width: 15%; /* Ajustado para tamaño relativo */
+    height: auto;
+    margin-right: 2%;
+    object-fit: contain;
+}
+
+/* Contenedor de los títulos */
+.titles-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 2%;
+}
+
+h1 {
+    font-family: 'Arial', sans-serif;
+    font-size: 2rem; /* Tamaño relativo */
+    font-weight: bold;
+    color: #000000;
+    margin: 0;
+    text-transform: uppercase;
+    border-bottom: 0.2rem solid #000080; /* Ajustado */
+    padding-bottom: 0.5%;
+}
+
+h2 {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.5rem; /* Tamaño relativo */
+    font-weight: bold;
+    color: #000080;
+    margin: 1% 0 0 0;
+    text-transform: uppercase;
+}
+
+.subtitle span {
+    font-family: 'Arial', sans-serif;
+    font-size: 1rem; /* Tamaño relativo */
+    font-weight: normal;
+    color: #4b4b4b;
+    margin-top: 1%;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: absolute;
+    top: 2%;
+    right: 2%;
+    gap: 2%; /* Espaciado relativo */
+    z-index: 10;
+}
+
+.user-info img {
+    width: 25%; /* Tamaño relativo */
+    height: auto;
+    border-radius: 50%;
+    border: 0.2rem solid #000080; /* Ajustado */
+    object-fit: cover;
+    margin-top: 20%;
+    margin-right: 10%;
+}
+
+.user-info h3 {
+    font-family: 'Arial', sans-serif;
+    font-size: 1rem; /* Tamaño relativo */
+    font-weight: normal;
+    color: hsl(0, 0%, 0%);
+    margin: 0;
+    white-space: nowrap;
+    margin-top: 20%;
+    margin-right: 180%;
+}
+
+.user-info button {
+    background-color: #0026ff;
+    color: white;
+    border: none;
+    border-radius: 5%;
+    padding: 2% 3%;
+    font-family: 'Arial', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: -19%;
+    margin-right: -240%;
+}
+
+.user-info button:hover {
+    background-color: #3559f7;
+}
+
+/* Leyendas */
+.leyenda-container {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 2%;
+    margin: 2% 0;
+    max-height: 10%;
+    margin-top: -2%;
+    right: 15%; /* Ajustado para centrar mejor */
+}
+
+.creditos-seleccionados {
+    padding: 2%;
+    border-radius: 1rem;
+    background-color: #ffffff;
+    color: #000080;
+    font-family: 'Arial', sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    min-width: 25%; /* Ajustado */
+    position: absolute;
+    top: 8%; /* Ajustado en % */
+    right: 5%;
+    margin-top: -2%; /* Ajustado */
+    margin-right: -70%; /* Ajustado */
+}
+
+.creditos-seleccionados h3 {
+    margin-bottom: 1%;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #000080;
+}
+
+.creditos-seleccionados p {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+}
+
+.guardar {
+    position: absolute;
+    top: 2%;
+    right: 10%;
+    z-index: 10;
+    
+}
+
+.guardar button {
+    background-color: #0026ff;
+    color: white;
+    border: none;
+    border-radius: 5%;
+    padding: 2% 3%;
+    font-family: 'Arial', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: -100%;
+}
+
+
+.guardar button:hover {
+    background-color: #3559f7;
+}
+
+.success-message {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #2f00ff;
+    border: 0.2rem solid #070707;
+    border-radius: 1rem;
+    padding: 2%;
+    box-shadow: 0 4% 8% rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    text-align: center;
+}
+
+.success-message p {
+    font-family: 'Arial', sans-serif;
+    font-size: 1rem;
+    color: #fff6f6;
+    margin: 0 0 2% 0;
+}
+
+.success-message button {
+    background-color: #2f00ff;
+    color: #fff;
+    border: none;
+    border-radius: 5%;
+    padding: 1% 2%;
+    font-family: 'Arial', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.success-message button:hover {
+    background-color: #d32f2f;
+}
+
+@media (max-width: 768px) {
+    /* Ajuste del logo */
+    .logo {
+        width: 25%;
+        margin: 0 auto;
+        display: block;
+    }
+
+    /* Contenedor de títulos */
+    .titles-container {
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1rem;
+    }
+
+    /* Ajuste de la información del usuario */
+    .user-info {
+        flex-direction: column;
+        align-items: center;
+        position: static;
+        margin-top: 10px;
+        gap: 10px;
+    }
+
+    .user-info img {
+        width: 50px;
+        height: 50px;
+        margin: 0;
+    }
+
+    .user-info h3 {
+        margin: 5px 0;
+    }
+
+    .user-info button {
+        margin: 0;
+    }
+
+    /* Ajuste de leyendas */
+    .leyenda-container {
+        flex-direction: column;
+        gap: 10px;
+        margin: 20px 0;
+        position: static;
+    }
+
+    .creditos-seleccionados {
+        position: static;
+        margin: 10px auto;
+        width: 90%;
+    }
+
+    /* Ajuste del botón "Guardar Avance" */
+    .guardar {
+        position: static;
+        margin: 20px auto;
+        text-align: center;
+    }
+
+    .guardar button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+    .user-info {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        position: static;
+        gap: 20px;
+    }
+
+    .leyenda-container {
+        flex-direction: row;
+        justify-content: space-evenly;
+        margin: 20px auto;
+    }
+
+    .creditos-seleccionados {
+        width: 50%;
+        margin: 0 auto;
+    }
+
+    .guardar {
+        margin: 10px auto;
+        text-align: center;
+    }
+
+    .guardar button {
+        font-size: 1rem;
+    }
+
 }

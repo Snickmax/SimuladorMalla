@@ -10,12 +10,34 @@ function Simulador({ user }) {
     const [selectedCarrera, setSelectedCarrera] = useState('');
     const [estadoAsignaturas, setEstadoAsignaturas] = useState({});
     const [creditosSeleccionados, setCreditosSeleccionados] = useState(0);
-    const [showModal, setShowModal] = useState(false);  // Modal visible por defecto
-    const [isCarreraCargada, setIsCarreraCargada] = useState(false); // Para controlar la carga inicial
+    const [showModal, setShowModal] = useState(false);
+    const [isCarreraCargada, setIsCarreraCargada] = useState(false);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false); // Estado para ventana emergente
 
+    // Función para convertir números a romanos
+    function enteroARomano(num) {
+        const valoresRomanos = [
+            { valor: 10, simbolo: 'X' },
+            { valor: 9, simbolo: 'IX' },
+            { valor: 5, simbolo: 'V' },
+            { valor: 4, simbolo: 'IV' },
+            { valor: 1, simbolo: 'I' }
+        ];
 
-     // Cargar las carreras disponibles cuando el componente se monta
-     useEffect(() => {
+        let resultado = '';
+
+        for (let i = 0; i < valoresRomanos.length; i++) {
+            while (num >= valoresRomanos[i].valor) {
+                resultado += valoresRomanos[i].simbolo;
+                num -= valoresRomanos[i].valor;
+            }
+        }
+
+        return resultado;
+    }
+
+    // Cargar las carreras disponibles cuando el componente se monta
+    useEffect(() => {
         const cargarCarreras = async () => {
             try {
                 const response = await axios.get('http://localhost:8000/carreras');
@@ -36,7 +58,6 @@ function Simulador({ user }) {
 
                 if (response.data && response.data.carrera) {
                     setIsCarreraCargada(true);
-                    // Llamar a la API para obtener las asignaturas relacionadas a la carrera
                     obtenerAsignaturas(response.data.carrera.id);
                 } else {
                     setIsCarreraCargada(false);
@@ -72,9 +93,9 @@ function Simulador({ user }) {
                 email: user.email,
                 carrera_id: selectedCarrera,
             });
-            setIsCarreraCargada(true); // Ahora el usuario tiene una carrera asociada
-            setShowModal(false); // Cerrar el modal
-            obtenerAsignaturas(selectedCarrera); // Obtener las asignaturas después de asociar la carrera
+            setIsCarreraCargada(true);
+            setShowModal(false);
+            obtenerAsignaturas(selectedCarrera);
         } catch (error) {
             console.error('Error al asociar carrera:', error);
         }
@@ -84,14 +105,14 @@ function Simulador({ user }) {
         const obtenerEstados = async () => {
             try {
                 const response = await axios.get(`http://localhost:8000/obtener-estados/?email=${user.email}`);
-                setEstadoAsignaturas(response.data.estados); // Establece los estados de las asignaturas
+                setEstadoAsignaturas(response.data.estados);
             } catch (error) {
                 console.error('Error al obtener los estados de las asignaturas:', error);
             }
         };
 
-        obtenerEstados(); // Llama a la función para obtener los estados
-    }, [user.email]); // Dependencia de `user.email`
+        obtenerEstados();
+    }, [user.email]);
 
     const handleAsignaturaClick = (asignatura) => {
         if (!user) {
@@ -116,15 +137,15 @@ function Simulador({ user }) {
                 return;
             }
             nuevoEstado = 'enCurso';
-            setCreditosSeleccionados(prev => prev + Number(asignatura.creditos));
+            setCreditosSeleccionados((prev) => prev + Number(asignatura.creditos));
         } else if (currentEstado === 'enCurso') {
             nuevoEstado = 'aprobado';
-            setCreditosSeleccionados(prev => prev - Number(asignatura.creditos));
+            setCreditosSeleccionados((prev) => prev - Number(asignatura.creditos));
         } else if (currentEstado === 'aprobado') {
             nuevoEstado = 'noCursado';
         }
 
-        setEstadoAsignaturas(prevState => ({
+        setEstadoAsignaturas((prevState) => ({
             ...prevState,
             [asignatura.id]: nuevoEstado,
         }));
@@ -146,34 +167,28 @@ function Simulador({ user }) {
             .map(([id]) => id);
 
         if (user) {
-            console.log("Email:", user.email);
-            console.log("Asignaturas en curso:", asignaturasEnCurso);
-            console.log("Asignaturas aprobadas:", asignaturasAprobadas);
-            console.log("Asignaturas no cursadas:", asignaturasNoCursadas);
-
             try {
                 const dataToSend = {
                     email: user.email,
                     asignaturas_en_curso: asignaturasEnCurso,
                     asignaturas_aprobadas: asignaturasAprobadas,
-                    asignaturas_a_eliminar: asignaturasNoCursadas
+                    asignaturas_a_eliminar: asignaturasNoCursadas,
                 };
 
                 await axios.post('http://localhost:8000/guardar-asignaturas/', dataToSend);
                 console.log("Asignaturas guardadas y relaciones eliminadas en Neo4j");
+                setShowSuccessMessage(true); // Muestra el mensaje de éxito
             } catch (error) {
                 console.error("Error al guardar o eliminar asignaturas:", error.response ? error.response.data : error.message);
             }
-        } else {
-            console.error("No hay usuario autenticado. No se puede guardar asignaturas.");
         }
     };
 
     const getBackgroundStyle = (asignatura) => {
         const currentEstado = estadoAsignaturas[asignatura.id] || 'noCursado';
-        if (currentEstado === 'noCursado') return { backgroundColor: 'white' };
-        else if (currentEstado === 'enCurso') return { backgroundColor: 'orange' };
-        else if (currentEstado === 'aprobado') return { backgroundColor: 'green' };
+        if (currentEstado === 'noCursado') return { backgroundColor: '#808080' };
+        else if (currentEstado === 'enCurso') return { backgroundColor: '#0000FF' };
+        else if (currentEstado === 'aprobado') return { backgroundColor: '#000080' };
         return { backgroundColor: 'white' };
     };
 
@@ -185,58 +200,94 @@ function Simulador({ user }) {
 
     return (
         <div>
+            {/* Ventana emergente */}
+            {showSuccessMessage && (
+                <div className="success-message">
+                    <p>Avance guardado con éxito</p>
+                    <button onClick={() => setShowSuccessMessage(false)}>X</button>
+                </div>
+            )}
+
             <div className='header'>
-    <h1>Simulador de Avance</h1>
-    {/* Modal para seleccionar la carrera */}
-    {!isCarreraCargada && (
-        <Modal
-            show={showModal}
-            onHide={() => {}}
-            centered
-            backdrop="static"  // Hace que no se pueda cerrar al hacer clic fuera del modal
-            keyboard={false}  // Desactiva el cierre con la tecla Escape
-        >
-            <Modal.Header>
-                <Modal.Title>Selecciona tu Carrera</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <select value={selectedCarrera} onChange={handleCarreraChange}>
-                    <option value="">Selecciona una carrera</option>
-                    {carreras.map((carrera) => (
-                        <option key={carrera.id} value={carrera.id}>
-                            {carrera.nombre}
-                        </option>
-                    ))}
-                </select>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button
-                    variant="primary"
-                    onClick={handleCloseModal}
-                    disabled={!selectedCarrera} // Deshabilitar hasta que se seleccione una carrera
-                >
-                    Confirmar
-                </Button>
-            </Modal.Footer>
-        </Modal>
-    )}
-</div>
-            <p>Créditos seleccionados: {creditosSeleccionados}</p>
+                <img src="logo-ucen-azul.png.png" alt="Logo" className="logo" />
+                <div className="titles-container">
+                    <h1>Simulador Malla</h1>
+                    <h2>Ingeniería Civil en Computación e Informática</h2>
+                    <div className="subtitle">
+                        <span>Facultad de Ingeniería y Arquitectura</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="guardar">
+                <button onClick={guardarAsignaturas}>Guardar Avance</button>
+            </div>
+
+            <div className="leyenda-container">
+                <div className="leyendas">
+                    <div className="leyenda-fila">
+                        <div className="leyenda-item">
+                            <div
+                                style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    marginRight: '8px',
+                                    borderRadius: '4px',
+                                    backgroundColor: '#0000FF',
+                                    border: '1px solid #000000',
+                                }}
+                            ></div>
+                            <span>En curso</span>
+                        </div>
+                        <div className="leyenda-item">
+                            <div
+                                style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    marginRight: '8px',
+                                    borderRadius: '4px',
+                                    backgroundColor: '#808080',
+                                    border: '1px solid #000000',
+                                }}
+                            ></div>
+                            <span>No Cursado</span>
+                        </div>
+                        <div className="leyenda-item">
+                            <div
+                                style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    marginRight: '8px',
+                                    borderRadius: '4px',
+                                    backgroundColor: '#000080',
+                                    border: '1px solid #000000',
+                                }}
+                            ></div>
+                            <span>Cursado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="creditos-seleccionados">
+                    <h3>Créditos Seleccionados</h3>
+                    <p>{creditosSeleccionados}</p>
+                </div>
+            </div>
 
             <div className='simulador'>
                 <div className="simulador-container">
-                    {Object.keys(asignaturas).map(semestre => {
+                    {Object.keys(asignaturas).map((semestre) => {
                         const asignaturasSemestre = asignaturas[semestre];
-                        const practicas = asignaturasSemestre.filter(asignatura => asignatura.nombre.includes('Práctica'));
-                        const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.nombre.includes('Práctica'));
+                        const practicas = asignaturasSemestre.filter((asignatura) => asignatura.nombre.includes('Práctica'));
+                        const asignaturasSinPracticas = asignaturasSemestre.filter((asignatura) => !asignatura.nombre.includes('Práctica'));
 
                         return (
                             <div key={semestre} className="semestre-columna">
-                                <h3>Semestre {semestre}</h3>
+                                <h3>Semestre {enteroARomano(parseInt(semestre))}</h3>
                                 <div className="contenido-semestre">
                                     {practicas.length > 0 && (
                                         <div className="practica-columna">
-                                            {practicas.map(practica => (
+                                            {practicas.map((practica) => (
                                                 <OverlayTrigger
                                                     key={practica.id}
                                                     placement="top"
@@ -244,20 +295,18 @@ function Simulador({ user }) {
                                                     overlay={(props) => renderTooltip(props, practica.creditos)}
                                                 >
                                                     <div
-                                                        className='ulPractica'
+                                                        className="ulPractica"
                                                         onClick={() => handleAsignaturaClick(practica)}
                                                         style={getBackgroundStyle(practica)}
                                                     >
-                                                        <div className='ilPractica'>
-                                                            {practica.nombre}
-                                                        </div>
+                                                        <div className="ilPractica">{practica.nombre}</div>
                                                     </div>
                                                 </OverlayTrigger>
                                             ))}
                                         </div>
                                     )}
-                                    <div className='ulAsignatura'>
-                                        {asignaturasSinPracticas.map(asignatura => (
+                                    <div className="ulAsignatura">
+                                        {asignaturasSinPracticas.map((asignatura) => (
                                             <OverlayTrigger
                                                 key={asignatura.id}
                                                 placement="top"
@@ -280,11 +329,8 @@ function Simulador({ user }) {
                     })}
                 </div>
             </div>
-            <div className="guardar">
-                <button onClick={guardarAsignaturas}>Guardar Avance</button>
-            </div>
         </div>
     );
-};
+}
 
 export default Simulador;
