@@ -35,14 +35,13 @@
     display: flex;
     width: 100%;
     transform: rotate(90deg);
-    color: #000000;
     white-space: nowrap;
 }
 
 .ilAsignatura {
     text-align: center;
     padding: 5px;
-    color: #555;
+    color: white;
 }
 
 /* Ajustes de interacción y simulación */

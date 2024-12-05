@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Simulador.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Tooltip, OverlayTrigger, Modal, Button, Row } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 import Login from './Login';
 
 function Simulador({ user, setUser }) {
@@ -14,7 +14,9 @@ function Simulador({ user, setUser }) {
     const [showModal, setShowModal] = useState(false);  // Modal visible por defecto
     const [isCarreraCargada, setIsCarreraCargada] = useState(false); // Para controlar la carga inicial
     const [isLoading, setIsLoading] = useState(true); // Nuevo estado para el loading
-
+    const [hoveredAsignatura, setHoveredAsignatura] = useState(null);
+    const [hoveredTexto, setHoveredTexto] = useState('');
+    const [candado, setcandado] = useState(null);
     // Cargar las carreras disponibles cuando el componente se monta
     useEffect(() => {
         const cargarCarreras = async () => {
@@ -175,17 +177,41 @@ function Simulador({ user, setUser }) {
 
     const getBackgroundStyle = (asignatura) => {
         const currentEstado = estadoAsignaturas[asignatura.id] || 'noCursado';
-        if (currentEstado === 'noCursado') return { backgroundColor: 'white' };
-        else if (currentEstado === 'enCurso') return { backgroundColor: 'orange' };
-        else if (currentEstado === 'aprobado') return { backgroundColor: 'green' };
+        if (currentEstado === 'noCursado') return { backgroundColor: '#4c4c4c' };
+        else if (currentEstado === 'enCurso') return { backgroundColor: '#1464f6' };
+        else if (currentEstado === 'aprobado') return { backgroundColor: '#033076' };
         return { backgroundColor: 'white' };
     };
 
-    const renderTooltip = (props, creditos) => (
-        <Tooltip id="button-tooltip" {...props}>
-            Créditos: {creditos}
-        </Tooltip>
-    );
+
+    const getBlockStyle = (asignatura) => {
+        const prerrequisitos = asignatura.prerrequisitos || [];
+        const todosPrerrequisitosAprobados = prerrequisitos.every((pr) => estadoAsignaturas[pr.id] === 'aprobado');
+
+        if (!todosPrerrequisitosAprobados) {
+            return { };
+        }
+        return {};
+    };
+
+    const getCandado = (asignatura) => {
+        const prerrequisitos = asignatura.prerrequisitos || [];
+        const todosPrerrequisitosAprobados = prerrequisitos.every((pr) => estadoAsignaturas[pr.id] === 'aprobado');
+
+        if (!todosPrerrequisitosAprobados) {
+            setcandado(asignatura.id)
+        }
+    };
+
+    const handleMouseEnter = (asignatura) => {
+        setHoveredAsignatura(asignatura.id);
+        setHoveredTexto(`Creditos: ${asignatura.creditos}`);
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredAsignatura(null);
+        setHoveredTexto('');
+    };
 
     return (
         <div>
@@ -272,11 +298,11 @@ function Simulador({ user, setUser }) {
                                             height: '20px',
                                             marginRight: '8px',
                                             borderRadius: '4px',
-                                            backgroundColor: '#9a9a9a',
+                                            backgroundColor: '#4c4c4c',
                                             border: '1px solid #000000',
                                         }}
                                     ></div>
-                                    <span>No curso</span>
+                                    <span>No cursado</span>
                                 </div>
                                 <div className="leyenda-item">
                                     <div
@@ -289,7 +315,7 @@ function Simulador({ user, setUser }) {
                                             border: '1px solid #000000',
                                         }}
                                     ></div>
-                                    <span>En Cursado</span>
+                                    <span>En Curso</span>
                                 </div>
                                 <div className="leyenda-item">
                                     <div
@@ -302,7 +328,7 @@ function Simulador({ user, setUser }) {
                                             border: '1px solid #000000',
                                         }}
                                     ></div>
-                                    <span>Cursado</span>
+                                    <span>Aprobado</span>
                                 </div>
                             </div>
                         </div>
@@ -327,42 +353,55 @@ function Simulador({ user, setUser }) {
                                             {practicas.length > 0 && (
                                                 <div className="practica-columna">
                                                     {practicas.map(practica => (
-                                                        <OverlayTrigger
-                                                            key={practica.id}
-                                                            placement="top"
-                                                            delay={{ show: 250, hide: 400 }}
-                                                            overlay={(props) => renderTooltip(props, practica.creditos)}
+
+                                                        <div
+                                                            className='ulPractica'
+                                                            onClick={() => handleAsignaturaClick(practica)}
+                                                            onMouseEnter={() => handleMouseEnter(practica)}
+                                                            onMouseLeave={handleMouseLeave}
+                                                            style={{
+                                                                ...getBackgroundStyle(practica),
+                                                                ...getBlockStyle(practica),
+                                                            }}
                                                         >
-                                                            <div
-                                                                className='ulPractica'
-                                                                onClick={() => handleAsignaturaClick(practica)}
-                                                                style={getBackgroundStyle(practica)}
-                                                            >
-                                                                <div className='ilPractica'>
-                                                                    {practica.nombre}
-                                                                </div>
+                                                            <div className='ilPractica'>
+                                                                {hoveredAsignatura === practica.id ? hoveredTexto : practica.nombre}
                                                             </div>
-                                                        </OverlayTrigger>
+                                                        </div>
+
                                                     ))}
                                                 </div>
                                             )}
                                             <div className='ulAsignatura'>
-                                                {asignaturasSinPracticas.map(asignatura => (
-                                                    <OverlayTrigger
-                                                        key={asignatura.id}
-                                                        placement="top"
-                                                        delay={{ show: 250, hide: 400 }}
-                                                        overlay={(props) => renderTooltip(props, asignatura.creditos)}
-                                                    >
+                                                {asignaturasSinPracticas.map(asignatura => {
+
+                                                    const prerrequisitos = asignatura.prerrequisitos || [];
+                                                    const todosPrerrequisitosAprobados = prerrequisitos.every((pr) => estadoAsignaturas[pr.id] === 'aprobado');
+
+                                                    return (
                                                         <div
                                                             className="cuadro ilAsignatura"
                                                             onClick={() => handleAsignaturaClick(asignatura)}
-                                                            style={getBackgroundStyle(asignatura)}
+                                                            onMouseEnter={() => handleMouseEnter(asignatura)}
+                                                            onMouseLeave={handleMouseLeave}
+                                                            style={{
+                                                                ...getBackgroundStyle(asignatura),
+                                                                ...getBlockStyle(asignatura)
+                                                            }}
                                                         >
-                                                            {asignatura.nombre}
+                                                            <div>
+                                                                {hoveredAsignatura === asignatura.id ? hoveredTexto : asignatura.nombre}
+                                                            </div>
+                                                            <div>
+                                                                {!todosPrerrequisitosAprobados && (
+                                                                    <div>
+                                                                        🔒
+                                                                    </div>
+                                                                )}
+                                                            </div>
                                                         </div>
-                                                    </OverlayTrigger>
-                                                ))}
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     </div>
