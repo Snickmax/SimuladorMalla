@@ -101,26 +101,24 @@
 
 .user-info {
     position: absolute;
-    top: 60px;
-    /* Ajusta para evitar que se solape con el logo */
+    top: 60px; /* Ajusta para evitar que se solape con el logo */
     right: 0;
     background-color: #fff;
     border: 1px solid #ccc;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 10px;
     border-radius: 5px;
-    display: none;
+    display: none; /* Por defecto, no se muestra */
     z-index: 10;
+    min-width: 150px; /* Asegura un tamaño mínimo */
 }
 
 .user-info.show {
-    display: block;
-    /* Muestra el menú */
+    display: block; /* Muestra el menú */
 }
 
 .user-info.hide {
-    display: none;
-    /* Esconde el menú */
+    display: none; /* Esconde el menú */
 }
 
 .user-info h3 {
@@ -130,13 +128,17 @@
 }
 
 .user-info button {
+    display: inline-block; /* Hace que el tamaño se ajuste al texto */
     margin-top: 10px;
     background-color: #007bff;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 5px 10px; /* Ajusta el padding del botón */
     border-radius: 3px;
     cursor: pointer;
+    width: auto; /* El botón tomará el tamaño del texto */
+    min-width: 120px; /* Opcional: establece un ancho mínimo si lo deseas */
+    text-align: center; /* Centra el texto del botón */
 }
 
 .user-info button:hover {

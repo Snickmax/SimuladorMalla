@@ -222,133 +222,153 @@ function Simulador({ user, setUser }) {
                     </Modal.Footer>
                 </Modal>
             )}
-            <div className='header'>
-                <div>
-                    <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
-                </div>
-                <div className='informacion'>
-                    <h1 className='tittle'>Malla Simulada </h1>
-                    <h1>{selectedCarrera}</h1>
-                    <h2>Facultad de Ingeniería y Arquitectura</h2>
-                </div>
-                <Login user={user} setUser={setUser} />
-            </div>
-            <div className="leyenda">
-                <div className='leyendas'>
-                    <h3>Leyenda de procesos</h3>
-                    <div className="leyenda-fila">
-                        <div className="leyenda-item">
-                            <div
-                                style={{
-                                    width: '20px',
-                                    height: '20px',
-                                    marginRight: '8px',
-                                    borderRadius: '4px',
-                                    backgroundColor: '#ff8a84',
-                                    border: '1px solid #000000',
-                                }}
-                            ></div>
-                            <span>No curso</span>
-                        </div>
-                        <div className="leyenda-item">
-                            <div
-                                style={{
-                                    width: '20px',
-                                    height: '20px',
-                                    marginRight: '8px',
-                                    borderRadius: '4px',
-                                    backgroundColor: '#ff6624',
-                                    border: '1px solid #000000',
-                                }}
-                            ></div>
-                            <span>En Cursado</span>
-                        </div>
-                        <div className="leyenda-item">
-                            <div
-                                style={{
-                                    width: '20px',
-                                    height: '20px',
-                                    marginRight: '8px',
-                                    borderRadius: '4px',
-                                    backgroundColor: '#af3a11',
-                                    border: '1px solid #000000',
-                                }}
-                            ></div>
-                            <span>Cursado</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className='info-content'>
-                <p>Créditos seleccionados: {creditosSeleccionados}</p>
-                <div className="guardar">
-                    <button onClick={guardarAsignaturas}>Guardar Avance</button>
-                </div>
-            </div>
+
             {isLoading ? (
-                <div className="loading-screen">
-                    <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Loading...</span>
+                <div>
+                    <div className='header'>
+                        <div>
+                            <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
+                        </div>
+
+                        <div className='informacion'>
+                            <h1 className='tittle'>Malla Simulada </h1>
+                        </div>
+
+                        <Login user={user} setUser={setUser} />
                     </div>
-                    <p>Cargando datos...</p>
+
+                    <div className="loading-screen">
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                        <p>Cargando datos...</p>
+                    </div>
+
                 </div>
 
             ) : (
-                <div className='simulador'>
-                    <div className="simulador-container">
-                        {Object.keys(asignaturas).map(semestre => {
-                            const asignaturasSemestre = asignaturas[semestre];
-                            const practicas = asignaturasSemestre.filter(asignatura => asignatura.nombre.includes('Práctica'));
-                            const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.nombre.includes('Práctica'));
+                <div>
+                    <div className='header'>
+                        <div>
+                            <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
+                        </div>
 
-                            return (
-                                <div key={semestre} className="semestre-columna">
-                                    <h3>Semestre {semestre}</h3>
-                                    <div className="contenido-semestre">
-                                        {practicas.length > 0 && (
-                                            <div className="practica-columna">
-                                                {practicas.map(practica => (
+                        <div className='informacion'>
+                            <h1 className='tittle'>Malla Simulada </h1>
+                            <h1>{selectedCarrera}</h1>
+                            <h2>Facultad de Ingeniería y Arquitectura</h2>
+                        </div>
+
+                        <Login user={user} setUser={setUser} />
+                    </div>
+                    <div className="leyenda">
+                        <div className='leyendas'>
+                            <h3>Leyenda de procesos</h3>
+                            <div className="leyenda-fila">
+                                <div className="leyenda-item">
+                                    <div
+                                        style={{
+                                            width: '20px',
+                                            height: '20px',
+                                            marginRight: '8px',
+                                            borderRadius: '4px',
+                                            backgroundColor: '#9a9a9a',
+                                            border: '1px solid #000000',
+                                        }}
+                                    ></div>
+                                    <span>No curso</span>
+                                </div>
+                                <div className="leyenda-item">
+                                    <div
+                                        style={{
+                                            width: '20px',
+                                            height: '20px',
+                                            marginRight: '8px',
+                                            borderRadius: '4px',
+                                            backgroundColor: '#1464f6',
+                                            border: '1px solid #000000',
+                                        }}
+                                    ></div>
+                                    <span>En Cursado</span>
+                                </div>
+                                <div className="leyenda-item">
+                                    <div
+                                        style={{
+                                            width: '20px',
+                                            height: '20px',
+                                            marginRight: '8px',
+                                            borderRadius: '4px',
+                                            backgroundColor: '#033076',
+                                            border: '1px solid #000000',
+                                        }}
+                                    ></div>
+                                    <span>Cursado</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='info-content'>
+                        <p>Créditos seleccionados: {creditosSeleccionados}</p>
+                        <div className="guardar">
+                            <button onClick={guardarAsignaturas}>Guardar Avance</button>
+                        </div>
+                    </div>
+                    <div className='simulador'>
+                        <div className="simulador-container">
+                            {Object.keys(asignaturas).map(semestre => {
+                                const asignaturasSemestre = asignaturas[semestre];
+                                const practicas = asignaturasSemestre.filter(asignatura => asignatura.nombre.includes('Práctica'));
+                                const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.nombre.includes('Práctica'));
+
+                                return (
+                                    <div key={semestre} className="semestre-columna">
+                                        <h3>Semestre {semestre}</h3>
+                                        <div className="contenido-semestre">
+                                            {practicas.length > 0 && (
+                                                <div className="practica-columna">
+                                                    {practicas.map(practica => (
+                                                        <OverlayTrigger
+                                                            key={practica.id}
+                                                            placement="top"
+                                                            delay={{ show: 250, hide: 400 }}
+                                                            overlay={(props) => renderTooltip(props, practica.creditos)}
+                                                        >
+                                                            <div
+                                                                className='ulPractica'
+                                                                onClick={() => handleAsignaturaClick(practica)}
+                                                                style={getBackgroundStyle(practica)}
+                                                            >
+                                                                <div className='ilPractica'>
+                                                                    {practica.nombre}
+                                                                </div>
+                                                            </div>
+                                                        </OverlayTrigger>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            <div className='ulAsignatura'>
+                                                {asignaturasSinPracticas.map(asignatura => (
                                                     <OverlayTrigger
-                                                        key={practica.id}
+                                                        key={asignatura.id}
                                                         placement="top"
                                                         delay={{ show: 250, hide: 400 }}
-                                                        overlay={(props) => renderTooltip(props, practica.creditos)}
+                                                        overlay={(props) => renderTooltip(props, asignatura.creditos)}
                                                     >
                                                         <div
-                                                            className='ulPractica'
-                                                            onClick={() => handleAsignaturaClick(practica)}
-                                                            style={getBackgroundStyle(practica)}
+                                                            className="cuadro ilAsignatura"
+                                                            onClick={() => handleAsignaturaClick(asignatura)}
+                                                            style={getBackgroundStyle(asignatura)}
                                                         >
-                                                            <div className='ilPractica'>
-                                                                {practica.nombre}
-                                                            </div>
+                                                            {asignatura.nombre}
                                                         </div>
                                                     </OverlayTrigger>
                                                 ))}
                                             </div>
-                                        )}
-                                        <div className='ulAsignatura'>
-                                            {asignaturasSinPracticas.map(asignatura => (
-                                                <OverlayTrigger
-                                                    key={asignatura.id}
-                                                    placement="top"
-                                                    delay={{ show: 250, hide: 400 }}
-                                                    overlay={(props) => renderTooltip(props, asignatura.creditos)}
-                                                >
-                                                    <div
-                                                        className="cuadro ilAsignatura"
-                                                        onClick={() => handleAsignaturaClick(asignatura)}
-                                                        style={getBackgroundStyle(asignatura)}
-                                                    >
-                                                        {asignatura.nombre}
-                                                    </div>
-                                                </OverlayTrigger>
-                                            ))}
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             )}

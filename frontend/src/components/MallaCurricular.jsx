@@ -185,7 +185,6 @@ function MallaCurricular({ user, setUser })
             </div>
             <div className='informacion'>
               <h1 className='tittle'>Malla Interactiva</h1>
-              <h2>Facultad de Ingeniería y Arquitectura</h2>
               <div className="form-check form-switch">
                 <input
                   className="form-check-input"
@@ -201,53 +200,8 @@ function MallaCurricular({ user, setUser })
               </div>
             </div>
           </div>
-          <div className="leyenda">
-            <div className='leyendas'>
-              <h3>Leyenda de Requisitos</h3>
-              <div className="leyenda-fila">
-                <div className="leyenda-item">
-                  <div
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      marginRight: '8px',
-                      borderRadius: '4px',
-                      backgroundColor: '#ff8a84',
-                      border: '1px solid #000000',
-                    }}
-                  ></div>
-                  <span>Requisito</span>
-                </div>
-                <div className="leyenda-item">
-                  <div
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      marginRight: '8px',
-                      borderRadius: '4px',
-                      backgroundColor: '#ff6624',
-                      border: '1px solid #000000',
-                    }}
-                  ></div>
-                  <span>Seleccionado</span>
-                </div>
-                <div className="leyenda-item">
-                  <div
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      marginRight: '8px',
-                      borderRadius: '4px',
-                      backgroundColor: '#af3a11',
-                      border: '1px solid #000000',
-                    }}
-                  ></div>
-                  <span>Abre</span>
-                </div>
-              </div>
-            </div>
-            <Login user={user} setUser={setUser}/> 
-          </div>
+          
+          <Login user={user} setUser={setUser}/> 
           <div className="loading-screen">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
