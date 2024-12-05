@@ -104,18 +104,32 @@ function Simulador({ user, setUser }) {
             console.log('Necesitas iniciar sesión para seleccionar una asignatura');
             return;
         }
-
+    
+        // Obtener los postrequisitos de la asignatura
+        const postrequisitos = asignatura.postrequisitos || [];
+    
+        // Verificar si algún postrequisito está aprobado o en curso
+        const algunPostrequisitoEnEstadoValido = postrequisitos.some((pr) => 
+            estadoAsignaturas[pr.id] === 'aprobado' || estadoAsignaturas[pr.id] === 'enCurso'
+        );
+    
+        if (algunPostrequisitoEnEstadoValido) {
+            alert("No puedes cambiar el estado de esta asignatura porque tiene postrequisitos aprobados o en curso.");
+            return;
+        }
+    
+        // Verificar si todos los prerrequisitos están aprobados
         const prerrequisitos = asignatura.prerrequisitos || [];
         const todosPrerrequisitosAprobados = prerrequisitos.every((pr) => estadoAsignaturas[pr.id] === 'aprobado');
-
+    
         if (!todosPrerrequisitosAprobados) {
             alert("No puedes seleccionar esta asignatura hasta que todos los prerrequisitos estén aprobados.");
             return;
         }
-
+    
         const currentEstado = estadoAsignaturas[asignatura.id] || 'noCursado';
         let nuevoEstado;
-
+    
         if (currentEstado === 'noCursado') {
             if (creditosSeleccionados + Number(asignatura.creditos) > 31) {
                 alert("No puedes seleccionar más de 31 créditos.");
@@ -129,12 +143,12 @@ function Simulador({ user, setUser }) {
         } else if (currentEstado === 'aprobado') {
             nuevoEstado = 'noCursado';
         }
-
+    
         setEstadoAsignaturas(prevState => ({
             ...prevState,
             [asignatura.id]: nuevoEstado,
         }));
-
+    
         console.log(`Asignatura: ${asignatura.nombre} - Estado: ${nuevoEstado}`);
     };
 
