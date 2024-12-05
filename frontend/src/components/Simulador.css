@@ -61,9 +61,11 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
+
 .guardar {
     justify-self: end;
 }
+
 .guardar button {
     min-width: 150px;
     padding: 5px;
@@ -80,4 +82,63 @@
 
 .guardar button:hover {
     background-color: #3559f7;
+}
+
+.user-container {
+    position: absolute;
+    top: 2px;
+    right: 5px;
+    display: inline-block;
+}
+
+.user-logo {
+    width: 50px;
+    /* Ajusta el tamaño según sea necesario */
+    height: 50px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.user-info {
+    position: absolute;
+    top: 60px;
+    /* Ajusta para evitar que se solape con el logo */
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+    z-index: 10;
+}
+
+.user-info.show {
+    display: block;
+    /* Muestra el menú */
+}
+
+.user-info.hide {
+    display: none;
+    /* Esconde el menú */
+}
+
+.user-info h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.user-info button {
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.user-info button:hover {
+    background-color: #0056b3;
 }

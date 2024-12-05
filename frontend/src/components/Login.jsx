@@ -5,6 +5,12 @@ import axios from 'axios';
 function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible como prop
     const [showGoogleSignIn, setShowGoogleSignIn] = useState(false);
 
+    const [showUserInfo, setShowUserInfo] = useState(false);
+
+    const toggleUserInfo = () => {
+        setShowUserInfo((prev) => !prev);
+    };
+
     function handleCallbackResponse(response) {
         const userObject = jwtDecode(response.credential);
         setUser(userObject);
@@ -69,10 +75,17 @@ function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible com
             {/* Información del usuario cuando está logueado */}
             {
                 user && (
-                    <div className="user-info">
-                        <button onClick={handleSignOut}>Cerrar Sesión</button>
-                        <img src={user.picture} alt="User" />
-                        <h3>{user.name}</h3>
+                    <div className="user-container">
+                        <img
+                            src={user.picture}
+                            alt="User"
+                            className="user-logo"
+                            onClick={toggleUserInfo}
+                        />
+                        <div className={`user-info ${showUserInfo ? "show" : "hide"}`}>
+                            <h3>{user.name}</h3>
+                            <button onClick={handleSignOut}>Cerrar Sesión</button>
+                        </div>
                     </div>
                 )
             }

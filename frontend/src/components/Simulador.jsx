@@ -225,7 +225,7 @@ function Simulador({ user, setUser }) {
                     <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
                 </div>
                 <div className='informacion'>
-                    <h1 className='tittle'>Malla Interactiva </h1>
+                    <h1 className='tittle'>Malla Simulada </h1>
                     <h1>{selectedCarrera}</h1>
                     <h2>Facultad de Ingeniería y Arquitectura</h2>
                 </div>
@@ -246,7 +246,7 @@ function Simulador({ user, setUser }) {
                                     border: '1px solid #000000',
                                 }}
                             ></div>
-                            <span>Requisito</span>
+                            <span>No curso</span>
                         </div>
                         <div className="leyenda-item">
                             <div
@@ -259,7 +259,7 @@ function Simulador({ user, setUser }) {
                                     border: '1px solid #000000',
                                 }}
                             ></div>
-                            <span>Seleccionado</span>
+                            <span>En Cursado</span>
                         </div>
                         <div className="leyenda-item">
                             <div
@@ -272,7 +272,7 @@ function Simulador({ user, setUser }) {
                                     border: '1px solid #000000',
                                 }}
                             ></div>
-                            <span>Abre</span>
+                            <span>Cursado</span>
                         </div>
                     </div>
                 </div>
