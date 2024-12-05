@@ -13,7 +13,7 @@ function Simulador({ user, setUser }) {
     const [creditosSeleccionados, setCreditosSeleccionados] = useState(0);
     const [showModal, setShowModal] = useState(false);  // Modal visible por defecto
     const [isCarreraCargada, setIsCarreraCargada] = useState(false); // Para controlar la carga inicial
-
+    const [isLoading, setIsLoading] = useState(true); // Nuevo estado para el loading
 
     // Cargar las carreras disponibles cuando el componente se monta
     useEffect(() => {
@@ -59,6 +59,8 @@ function Simulador({ user, setUser }) {
             setAsignaturas(response.data);
         } catch (error) {
             console.error('Error al obtener las asignaturas:', error);
+        } finally {
+            setIsLoading(false); // Desactivar el loading una vez cargado
         }
     };
 
@@ -283,63 +285,73 @@ function Simulador({ user, setUser }) {
                     <button onClick={guardarAsignaturas}>Guardar Avance</button>
                 </div>
             </div>
-            <div className='simulador'>
-                <div className="simulador-container">
-                    {Object.keys(asignaturas).map(semestre => {
-                        const asignaturasSemestre = asignaturas[semestre];
-                        const practicas = asignaturasSemestre.filter(asignatura => asignatura.nombre.includes('Práctica'));
-                        const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.nombre.includes('Práctica'));
+            {isLoading ? (
+                <div className="loading-screen">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Cargando datos...</p>
+                </div>
 
-                        return (
-                            <div key={semestre} className="semestre-columna">
-                                <h3>Semestre {semestre}</h3>
-                                <div className="contenido-semestre">
-                                    {practicas.length > 0 && (
-                                        <div className="practica-columna">
-                                            {practicas.map(practica => (
+            ) : (
+                <div className='simulador'>
+                    <div className="simulador-container">
+                        {Object.keys(asignaturas).map(semestre => {
+                            const asignaturasSemestre = asignaturas[semestre];
+                            const practicas = asignaturasSemestre.filter(asignatura => asignatura.nombre.includes('Práctica'));
+                            const asignaturasSinPracticas = asignaturasSemestre.filter(asignatura => !asignatura.nombre.includes('Práctica'));
+
+                            return (
+                                <div key={semestre} className="semestre-columna">
+                                    <h3>Semestre {semestre}</h3>
+                                    <div className="contenido-semestre">
+                                        {practicas.length > 0 && (
+                                            <div className="practica-columna">
+                                                {practicas.map(practica => (
+                                                    <OverlayTrigger
+                                                        key={practica.id}
+                                                        placement="top"
+                                                        delay={{ show: 250, hide: 400 }}
+                                                        overlay={(props) => renderTooltip(props, practica.creditos)}
+                                                    >
+                                                        <div
+                                                            className='ulPractica'
+                                                            onClick={() => handleAsignaturaClick(practica)}
+                                                            style={getBackgroundStyle(practica)}
+                                                        >
+                                                            <div className='ilPractica'>
+                                                                {practica.nombre}
+                                                            </div>
+                                                        </div>
+                                                    </OverlayTrigger>
+                                                ))}
+                                            </div>
+                                        )}
+                                        <div className='ulAsignatura'>
+                                            {asignaturasSinPracticas.map(asignatura => (
                                                 <OverlayTrigger
-                                                    key={practica.id}
+                                                    key={asignatura.id}
                                                     placement="top"
                                                     delay={{ show: 250, hide: 400 }}
-                                                    overlay={(props) => renderTooltip(props, practica.creditos)}
+                                                    overlay={(props) => renderTooltip(props, asignatura.creditos)}
                                                 >
                                                     <div
-                                                        className='ulPractica'
-                                                        onClick={() => handleAsignaturaClick(practica)}
-                                                        style={getBackgroundStyle(practica)}
+                                                        className="cuadro ilAsignatura"
+                                                        onClick={() => handleAsignaturaClick(asignatura)}
+                                                        style={getBackgroundStyle(asignatura)}
                                                     >
-                                                        <div className='ilPractica'>
-                                                            {practica.nombre}
-                                                        </div>
+                                                        {asignatura.nombre}
                                                     </div>
                                                 </OverlayTrigger>
                                             ))}
                                         </div>
-                                    )}
-                                    <div className='ulAsignatura'>
-                                        {asignaturasSinPracticas.map(asignatura => (
-                                            <OverlayTrigger
-                                                key={asignatura.id}
-                                                placement="top"
-                                                delay={{ show: 250, hide: 400 }}
-                                                overlay={(props) => renderTooltip(props, asignatura.creditos)}
-                                            >
-                                                <div
-                                                    className="cuadro ilAsignatura"
-                                                    onClick={() => handleAsignaturaClick(asignatura)}
-                                                    style={getBackgroundStyle(asignatura)}
-                                                >
-                                                    {asignatura.nombre}
-                                                </div>
-                                            </OverlayTrigger>
-                                        ))}
                                     </div>
                                 </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };
