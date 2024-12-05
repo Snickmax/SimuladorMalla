@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Simulador.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Modal, Button, Row } from 'react-bootstrap';
 import Login from './Login';
 
 function Simulador({ user, setUser }) {
@@ -225,14 +225,15 @@ function Simulador({ user, setUser }) {
                     <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
                 </div>
                 <div className='informacion'>
-                    <h1>Malla Interactiva <br />{selectedCarrera}</h1>
+                    <h1 className='tittle'>Malla Interactiva </h1>
+                    <h1>{selectedCarrera}</h1>
                     <h2>Facultad de Ingeniería y Arquitectura</h2>
                 </div>
-                <Login user={user} setUser={setUser}/> 
+                <Login user={user} setUser={setUser} />
             </div>
             <div className="leyenda">
                 <div className='leyendas'>
-                    <h3>Leyenda de Requisitos</h3>
+                    <h3>Leyenda de procesos</h3>
                     <div className="leyenda-fila">
                         <div className="leyenda-item">
                             <div
@@ -276,9 +277,12 @@ function Simulador({ user, setUser }) {
                     </div>
                 </div>
             </div>
-
-            <p>Créditos seleccionados: {creditosSeleccionados}</p>
-
+            <div className='info-content'>
+                <p>Créditos seleccionados: {creditosSeleccionados}</p>
+                <div className="guardar">
+                    <button onClick={guardarAsignaturas}>Guardar Avance</button>
+                </div>
+            </div>
             <div className='simulador'>
                 <div className="simulador-container">
                     {Object.keys(asignaturas).map(semestre => {
@@ -335,9 +339,6 @@ function Simulador({ user, setUser }) {
                         );
                     })}
                 </div>
-            </div>
-            <div className="guardar">
-                <button onClick={guardarAsignaturas}>Guardar Avance</button>
             </div>
         </div>
     );

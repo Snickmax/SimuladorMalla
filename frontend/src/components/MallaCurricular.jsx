@@ -184,7 +184,7 @@ function MallaCurricular({ user, setUser })
               <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
             </div>
             <div className='informacion'>
-              <h1>Malla Interactiva <br />{selectedCarrera.nombre}</h1>
+              <h1 className='tittle'>Malla Interactiva</h1>
               <h2>Facultad de Ingeniería y Arquitectura</h2>
               <div className="form-check form-switch">
                 <input
@@ -246,6 +246,7 @@ function MallaCurricular({ user, setUser })
                 </div>
               </div>
             </div>
+            <Login user={user} setUser={setUser}/> 
           </div>
           <div className="loading-screen">
             <div className="spinner-border text-primary" role="status">
@@ -261,7 +262,8 @@ function MallaCurricular({ user, setUser })
               <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
             </div>
             <div className='informacion'>
-              <h1>Malla Interactiva <br />{selectedCarrera.nombre}</h1>
+              <h1 className='tittle'>Malla Interactiva</h1>
+              <h1>{selectedCarrera.nombre}</h1>
               <h2>Facultad de Ingeniería y Arquitectura</h2>
               <select onChange={handleCarreraChange}>
                 <option value="">Cambiar de Malla</option>

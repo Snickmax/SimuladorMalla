@@ -130,6 +130,15 @@
     transition: background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease;
 }
 
+.tittle {
+    font-family: 'Arial', sans-serif;
+    font-size: 2rem; /* Tamaño relativo */
+    font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: 0.2rem solid #000080; /* Ajustado */
+    width:fit-content;
+}
+
 h3 {
     text-align: center;
     font-size: 1.2rem;
@@ -303,10 +312,12 @@ h3 {
     flex-direction: row;
     display: flex;
     flex-wrap: wrap;
+    margin-bottom: 10px;
 }
 
 .leyendas {
     margin: 16px;
+    margin-bottom: 0px;
     padding: 16px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -356,6 +367,7 @@ h3 {
     /* Imagen del logo: reducir tamaño y centrar */
     .logo-ucen {
         max-width: 20vh;
+        margin-bottom: 10px;
     }
 
     .simulador-button {
