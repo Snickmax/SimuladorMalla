@@ -14,8 +14,8 @@ function Simulador({ user }) {
     const [isCarreraCargada, setIsCarreraCargada] = useState(false); // Para controlar la carga inicial
 
 
-     // Cargar las carreras disponibles cuando el componente se monta
-     useEffect(() => {
+    // Cargar las carreras disponibles cuando el componente se monta
+    useEffect(() => {
         const cargarCarreras = async () => {
             try {
                 const response = await axios.get('http://localhost:8000/carreras');
@@ -186,41 +186,47 @@ function Simulador({ user }) {
     return (
         <div>
             <div className='header'>
-    <h1>Simulador de Avance</h1>
-    {/* Modal para seleccionar la carrera */}
-    {!isCarreraCargada && (
-        <Modal
-            show={showModal}
-            onHide={() => {}}
-            centered
-            backdrop="static"  // Hace que no se pueda cerrar al hacer clic fuera del modal
-            keyboard={false}  // Desactiva el cierre con la tecla Escape
-        >
-            <Modal.Header>
-                <Modal.Title>Selecciona tu Carrera</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <select value={selectedCarrera} onChange={handleCarreraChange}>
-                    <option value="">Selecciona una carrera</option>
-                    {carreras.map((carrera) => (
-                        <option key={carrera.id} value={carrera.id}>
-                            {carrera.nombre}
-                        </option>
-                    ))}
-                </select>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button
-                    variant="primary"
-                    onClick={handleCloseModal}
-                    disabled={!selectedCarrera} // Deshabilitar hasta que se seleccione una carrera
-                >
-                    Confirmar
-                </Button>
-            </Modal.Footer>
-        </Modal>
-    )}
-</div>
+                <div>
+                    <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
+                </div>
+                <div className='informacion'>
+                    <h1>Simulador de Avance</h1>
+                </div>
+                {/* Modal para seleccionar la carrera */}
+                {!isCarreraCargada && (
+                    <Modal
+                        show={showModal}
+                        onHide={() => { }}
+                        centered
+                        backdrop="static"  // Hace que no se pueda cerrar al hacer clic fuera del modal
+                        keyboard={false}  // Desactiva el cierre con la tecla Escape
+                    >
+                        <Modal.Header>
+                            <Modal.Title>Selecciona tu Carrera</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <select value={selectedCarrera} onChange={handleCarreraChange}>
+                                <option value="">Selecciona una carrera</option>
+                                {carreras.map((carrera) => (
+                                    <option key={carrera.id} value={carrera.id}>
+                                        {carrera.nombre}
+                                    </option>
+                                ))}
+                            </select>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button
+                                variant="primary"
+                                onClick={handleCloseModal}
+                                disabled={!selectedCarrera} // Deshabilitar hasta que se seleccione una carrera
+                            >
+                                Confirmar
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+                )}
+            </div>
+
             <p>Créditos seleccionados: {creditosSeleccionados}</p>
 
             <div className='simulador'>
