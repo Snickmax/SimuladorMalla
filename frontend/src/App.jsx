@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import Simulador from './components/Simulador';
 import MallaCurricular from './components/MallaCurricular';
-import Login from './components/Login';
 import CrearMalla from './components/CrearMalla';
 
 function App() {
@@ -10,8 +9,7 @@ function App() {
 
   return (
     <div className="App">
-      <Login user={user} setUser={setUser}/> 
-      {user ? <Simulador user={user}/>: <MallaCurricular/>}
+      {user ? <Simulador user={user} setUser={setUser}/>: <MallaCurricular user={user} setUser={setUser}/>}
     </div>
   );
 }

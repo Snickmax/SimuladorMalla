@@ -56,7 +56,7 @@ function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible com
             {/* Contenedor del botón "Simulador" y "Acceder por Google" */}
             {
                 !user && (
-                    <div className="simulador-buton-container">
+                    <div className="simulador-button-container">
                         <button className="simulador-button" onClick={() => setShowGoogleSignIn(!showGoogleSignIn)}>Simulador</button>
 
                         {/* Botón "Acceder por Google" aparece debajo de "Simulador" */}

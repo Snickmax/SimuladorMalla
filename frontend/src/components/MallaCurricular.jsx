@@ -2,8 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import './MallaCurricular.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Login from './Login';
 
-const MallaCurricular = () => {
+ 
+function MallaCurricular({ user, setUser })
+  {
   const [asignaturas, setAsignaturas] = useState({});
   const [selectedAsignatura, setSelectedAsignatura] = useState(null);
   const [carreras, setCarreras] = useState([]);
@@ -280,6 +283,7 @@ const MallaCurricular = () => {
                 </label>
               </div>
             </div>
+            <Login user={user} setUser={setUser}/> 
           </div>
 
           <div className={`${isMenuVisible ? 'menu-visible' : ''}`}>

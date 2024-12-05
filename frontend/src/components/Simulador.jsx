@@ -3,8 +3,9 @@ import axios from 'axios';
 import './Simulador.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Tooltip, OverlayTrigger, Modal, Button } from 'react-bootstrap';
+import Login from './Login';
 
-function Simulador({ user }) {
+function Simulador({ user, setUser }) {
     const [asignaturas, setAsignaturas] = useState({});
     const [carreras, setCarreras] = useState([]);
     const [selectedCarrera, setSelectedCarrera] = useState('');
@@ -37,6 +38,7 @@ function Simulador({ user }) {
                 if (response.data && response.data.carrera) {
                     setIsCarreraCargada(true);
                     // Llamar a la API para obtener las asignaturas relacionadas a la carrera
+                    setSelectedCarrera(response.data.carrera.nombre)
                     obtenerAsignaturas(response.data.carrera.id);
                 } else {
                     setIsCarreraCargada(false);
@@ -185,46 +187,94 @@ function Simulador({ user }) {
 
     return (
         <div>
+            {/* Modal para seleccionar la carrera */}
+            {!isCarreraCargada && (
+                <Modal
+                    show={showModal}
+                    onHide={() => { }}
+                    centered
+                    backdrop="static"  // Hace que no se pueda cerrar al hacer clic fuera del modal
+                    keyboard={false}  // Desactiva el cierre con la tecla Escape
+                >
+                    <Modal.Header>
+                        <Modal.Title>Selecciona tu Carrera</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <select value={selectedCarrera} onChange={handleCarreraChange}>
+                            <option value="">Selecciona una carrera</option>
+                            {carreras.map((carrera) => (
+                                <option key={carrera.id} value={carrera.id}>
+                                    {carrera.nombre}
+                                </option>
+                            ))}
+                        </select>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button
+                            variant="primary"
+                            onClick={handleCloseModal}
+                            disabled={!selectedCarrera} // Deshabilitar hasta que se seleccione una carrera
+                        >
+                            Confirmar
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            )}
             <div className='header'>
                 <div>
                     <img src="logo-ucen-azul.png.png" alt="logo ucen" className="logo-ucen" />
                 </div>
                 <div className='informacion'>
-                    <h1>Simulador de Avance</h1>
+                    <h1>Malla Interactiva <br />{selectedCarrera}</h1>
+                    <h2>Facultad de Ingeniería y Arquitectura</h2>
                 </div>
-                {/* Modal para seleccionar la carrera */}
-                {!isCarreraCargada && (
-                    <Modal
-                        show={showModal}
-                        onHide={() => { }}
-                        centered
-                        backdrop="static"  // Hace que no se pueda cerrar al hacer clic fuera del modal
-                        keyboard={false}  // Desactiva el cierre con la tecla Escape
-                    >
-                        <Modal.Header>
-                            <Modal.Title>Selecciona tu Carrera</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <select value={selectedCarrera} onChange={handleCarreraChange}>
-                                <option value="">Selecciona una carrera</option>
-                                {carreras.map((carrera) => (
-                                    <option key={carrera.id} value={carrera.id}>
-                                        {carrera.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button
-                                variant="primary"
-                                onClick={handleCloseModal}
-                                disabled={!selectedCarrera} // Deshabilitar hasta que se seleccione una carrera
-                            >
-                                Confirmar
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
-                )}
+                <Login user={user} setUser={setUser}/> 
+            </div>
+            <div className="leyenda">
+                <div className='leyendas'>
+                    <h3>Leyenda de Requisitos</h3>
+                    <div className="leyenda-fila">
+                        <div className="leyenda-item">
+                            <div
+                                style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    marginRight: '8px',
+                                    borderRadius: '4px',
+                                    backgroundColor: '#ff8a84',
+                                    border: '1px solid #000000',
+                                }}
+                            ></div>
+                            <span>Requisito</span>
+                        </div>
+                        <div className="leyenda-item">
+                            <div
+                                style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    marginRight: '8px',
+                                    borderRadius: '4px',
+                                    backgroundColor: '#ff6624',
+                                    border: '1px solid #000000',
+                                }}
+                            ></div>
+                            <span>Seleccionado</span>
+                        </div>
+                        <div className="leyenda-item">
+                            <div
+                                style={{
+                                    width: '20px',
+                                    height: '20px',
+                                    marginRight: '8px',
+                                    borderRadius: '4px',
+                                    backgroundColor: '#af3a11',
+                                    border: '1px solid #000000',
+                                }}
+                            ></div>
+                            <span>Abre</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <p>Créditos seleccionados: {creditosSeleccionados}</p>

@@ -1,16 +1,10 @@
 .simulador {
     overflow-x: auto;
     display: flex;
-    transition: margin-left 0.3s ease;
     background-color: #f0f0f0; /* Fondo gris desde el botón "Activar Menú" hacia abajo */
     padding: 20px;
-    min-height: 100vh; /* Extender hasta el fondo de la pantalla */
-    overflow-x: auto;
-    display: flex;
-    transition: margin-left 0.3s ease;
-    background-color: #f0f0f0;
-    padding: 20px;
     min-height: 50vh; /* Ocupa el 90% de la altura de la pantalla */
+    transition: margin-left 0.3s ease;
 }
 
 .simulador-container {
