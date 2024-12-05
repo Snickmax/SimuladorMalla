@@ -189,7 +189,7 @@ function Simulador({ user, setUser }) {
         const todosPrerrequisitosAprobados = prerrequisitos.every((pr) => estadoAsignaturas[pr.id] === 'aprobado');
 
         if (!todosPrerrequisitosAprobados) {
-            return { };
+            return {};
         }
         return {};
     };
