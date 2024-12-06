@@ -192,24 +192,27 @@ function Simulador({ user, setUser }) {
     
 
     const guardarAsignaturas = async () => {
+        // Activamos la carga
+        setIsLoading(true);
+    
         const asignaturasEnCurso = Object.entries(estadoAsignaturas)
             .filter(([_, estado]) => estado === 'enCurso')
             .map(([id]) => id);
-
+    
         const asignaturasAprobadas = Object.entries(estadoAsignaturas)
             .filter(([_, estado]) => estado === 'aprobado')
             .map(([id]) => id);
-
+    
         const asignaturasNoCursadas = Object.entries(estadoAsignaturas)
             .filter(([_, estado]) => estado === 'noCursado')
             .map(([id]) => id);
-
+    
         if (user) {
             console.log("Email:", user.email);
             console.log("Asignaturas en curso:", asignaturasEnCurso);
             console.log("Asignaturas aprobadas:", asignaturasAprobadas);
             console.log("Asignaturas no cursadas:", asignaturasNoCursadas);
-
+    
             try {
                 const dataToSend = {
                     email: user.email,
@@ -217,7 +220,7 @@ function Simulador({ user, setUser }) {
                     asignaturas_aprobadas: asignaturasAprobadas,
                     asignaturas_a_eliminar: asignaturasNoCursadas
                 };
-
+    
                 await axios.post('http://localhost:8000/guardar-asignaturas/', dataToSend);
                 console.log("Asignaturas guardadas y relaciones eliminadas en Neo4j");
             } catch (error) {
@@ -226,6 +229,9 @@ function Simulador({ user, setUser }) {
         } else {
             console.error("No hay usuario autenticado. No se puede guardar asignaturas.");
         }
+    
+        // Desactivamos el estado de carga
+        setIsLoading(false);
     };
 
     const getBackgroundStyle = (asignatura) => {
@@ -389,7 +395,10 @@ function Simulador({ user, setUser }) {
                     <div className='info-content'>
                         <p>Créditos seleccionados: {creditosSeleccionados}</p>
                         <div className="guardar">
-                            <button onClick={guardarAsignaturas}>Guardar Avance</button>
+                            <button onClick={guardarAsignaturas} disabled={isLoading}> {/* Deshabilitar botón mientras carga */}
+                                {isLoading ? 'Guardando... 🕓' : 'Guardar Avance'}
+                            </button>
+                            {isLoading && <div className="spinner">Cargando...</div>} {/* Mostrar spinner o texto mientras carga */}
                         </div>
                     </div>
                     <div className='simulador'>

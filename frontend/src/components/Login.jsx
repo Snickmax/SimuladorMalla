@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 
-function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible como prop
+function Login({ user, setUser, isMenuVisible }) {
     const [showGoogleSignIn, setShowGoogleSignIn] = useState(false);
-
+    const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
     const [showUserInfo, setShowUserInfo] = useState(false);
 
     const toggleUserInfo = () => {
@@ -32,11 +32,23 @@ function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible com
         }
     };
 
-    function handleSignOut() {
-        setUser(null);
+    // Función que abre el modal cuando el usuario intenta cerrar sesión
+    const handleSignOutClick = () => {
+        setIsModalOpen(true); // Abre el modal
+    };
+
+    const handleSignOut = () => {
+        setUser(null); // Eliminar usuario del estado
         localStorage.removeItem('user'); // Eliminar usuario de localStorage
-        setShowGoogleSignIn(false);
-    }
+        setShowGoogleSignIn(false); // Actualiza el estado del botón de inicio de sesión
+        setIsModalOpen(false); // Cierra el modal
+        console.log("Usuario cerrado sesión");
+    };
+
+    // Función para cancelar y cerrar el modal sin cerrar sesión
+    const handleCancel = () => {
+        setIsModalOpen(false); // Cierra el modal sin hacer nada
+    };
 
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -56,6 +68,53 @@ function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible com
             );
         }
     }, [showGoogleSignIn]);
+
+    const modalStyles = {
+        modal: {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', /* Fondo semitransparente */
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000, /* Asegura que el modal esté encima de otros elementos */
+        },
+        modalContent: {
+            backgroundColor: 'white',
+            padding: '20px',
+            borderRadius: '10px',
+            width: '300px',
+            textAlign: 'center',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', /* Sombra suave para el modal */
+        },
+        modalActions: {
+            marginTop: '20px',
+        },
+        button: {
+            padding: '10px 20px',
+            margin: '5px',
+            border: 'none',
+            cursor: 'pointer',
+            backgroundColor: '#007BFF',
+            color: 'white',
+            borderRadius: '5px',
+            transition: 'background-color 0.3s ease',
+        },
+        buttonHover: {
+            backgroundColor: '#0056b3',
+        },
+        modalText: {
+            fontSize: '18px',
+            marginBottom: '10px',
+        },
+        modalSubText: {
+            fontSize: '14px',
+            marginBottom: '20px',
+        }
+    };
 
     return (
         <div className={`login-container ${isMenuVisible ? 'menu-open' : ''}`}>
@@ -84,11 +143,33 @@ function Login({ user, setUser, isMenuVisible }) { // Añadido isMenuVisible com
                         />
                         <div className={`user-info ${showUserInfo ? "show" : "hide"}`}>
                             <h3>{user.name}</h3>
-                            <button onClick={handleSignOut}>Cerrar Sesión</button>
+                            <button onClick={handleSignOutClick}>Cerrar Sesión</button>
                         </div>
                     </div>
                 )
             }
+
+            {/* Modal de confirmación */}
+            {isModalOpen && (
+                <div style={modalStyles.modal}>
+                    <div style={modalStyles.modalContent}>
+                        <h4 style={modalStyles.modalText}>¿Estás seguro de que quieres cerrar sesión?</h4>
+                        <p style={modalStyles.modalSubText}>Puede que pierdas progreso no guardado.</p>
+                        <div style={modalStyles.modalActions}>
+                            <button
+                                style={modalStyles.button}
+                                onClick={handleSignOut}>
+                                Sí, Cerrar Sesión
+                            </button>
+                            <button
+                                style={{ ...modalStyles.button, ...modalStyles.buttonHover }}
+                                onClick={handleCancel}>
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
