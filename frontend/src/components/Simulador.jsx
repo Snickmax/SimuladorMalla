@@ -94,10 +94,32 @@ function Simulador({ user, setUser }) {
             } catch (error) {
                 console.error('Error al obtener los estados de las asignaturas:', error);
             }
-        };
-
+        };    
         obtenerEstados(); // Llama a la función para obtener los estados
     }, [user.email]); // Dependencia de `user.email`
+
+    useEffect(() => {
+        if (user) {
+            // Si el usuario está logueado, intentar recuperar los créditos desde localStorage
+            const storedCreditos = localStorage.getItem('creditosSeleccionados');
+            if (storedCreditos) {
+                setCreditosSeleccionados(Number(storedCreditos));
+            }
+    
+            // Recuperar y sumar los créditos de las asignaturas en curso
+            let totalCreditosEnCurso = 0;
+            Object.keys(asignaturas).forEach((semestre) => {
+                const asignaturasSemestre = asignaturas[semestre];
+                asignaturasSemestre.forEach((asignatura) => {
+                    if (estadoAsignaturas[asignatura.id] === 'enCurso') {
+                        totalCreditosEnCurso += Number(asignatura.creditos);
+                    }
+                });
+            });
+    
+            setCreditosSeleccionados(totalCreditosEnCurso);
+        }
+    }, [user.email, estadoAsignaturas, asignaturas]); // Dependencias actualizadas
 
     const handleAsignaturaClick = (asignatura) => {
         if (!user) {
@@ -129,28 +151,45 @@ function Simulador({ user, setUser }) {
     
         const currentEstado = estadoAsignaturas[asignatura.id] || 'noCursado';
         let nuevoEstado;
+        let nuevosCreditos;
     
         if (currentEstado === 'noCursado') {
+            // Si la asignatura no está cursada, se agrega como "enCurso"
             if (creditosSeleccionados + Number(asignatura.creditos) > 31) {
                 alert("No puedes seleccionar más de 31 créditos.");
                 return;
             }
             nuevoEstado = 'enCurso';
-            setCreditosSeleccionados(prev => prev + Number(asignatura.creditos));
+            nuevosCreditos = creditosSeleccionados + Number(asignatura.creditos);
         } else if (currentEstado === 'enCurso') {
+            // Si la asignatura está en curso, se marca como "aprobado"
             nuevoEstado = 'aprobado';
-            setCreditosSeleccionados(prev => prev - Number(asignatura.creditos));
+            nuevosCreditos = creditosSeleccionados - Number(asignatura.creditos);
         } else if (currentEstado === 'aprobado') {
+            // Si la asignatura está aprobada, se desmarca (vuelve a "noCursado")
             nuevoEstado = 'noCursado';
+            nuevosCreditos = creditosSeleccionados - Number(asignatura.creditos);
         }
     
+        // Actualizamos el estado de la asignatura
         setEstadoAsignaturas(prevState => ({
             ...prevState,
             [asignatura.id]: nuevoEstado,
         }));
     
-        console.log(`Asignatura: ${asignatura.nombre} - Estado: ${nuevoEstado}`);
+        // Actualizamos los créditos seleccionados
+        setCreditosSeleccionados(nuevosCreditos);
+    
+        // Solo guardamos los créditos si la asignatura está en curso
+        if (nuevoEstado === 'enCurso') {
+            localStorage.setItem('creditosSeleccionados', nuevosCreditos);
+            console.log(`Asignatura: ${asignatura.nombre} - Estado: ${nuevoEstado}`);
+            console.log(`Créditos seleccionados guardados en localStorage: ${nuevosCreditos}`);
+        } else {
+            console.log(`Asignatura: ${asignatura.nombre} - Estado: ${nuevoEstado}`);
+        }
     };
+    
 
     const guardarAsignaturas = async () => {
         const asignaturasEnCurso = Object.entries(estadoAsignaturas)
