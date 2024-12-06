@@ -248,18 +248,9 @@ function Simulador({ user, setUser }) {
         const todosPrerrequisitosAprobados = prerrequisitos.every((pr) => estadoAsignaturas[pr.id] === 'aprobado');
 
         if (!todosPrerrequisitosAprobados) {
-            return {};
+            return { backgroundColor: 'black'};
         }
         return {};
-    };
-
-    const getCandado = (asignatura) => {
-        const prerrequisitos = asignatura.prerrequisitos || [];
-        const todosPrerrequisitosAprobados = prerrequisitos.every((pr) => estadoAsignaturas[pr.id] === 'aprobado');
-
-        if (!todosPrerrequisitosAprobados) {
-            setcandado(asignatura.id)
-        }
     };
 
     const handleMouseEnter = (asignatura) => {
