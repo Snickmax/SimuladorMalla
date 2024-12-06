@@ -1,94 +1,99 @@
+.header {
+    display: flex;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.informacion h2 {
+    font-size: 1.5rem;
+    font-weight: normal;
+    color: #666;
+    margin: 0;
+}
+
+.informacion select,
+.informacion .form-check {
+    margin-top: 10px;
+}
+
 .malla-curricular {
     overflow-x: auto;
     display: flex;
     transition: margin-left 0.3s ease;
-}
-
-.menu-visible .malla-container, .menu-visible .header {
-    margin-left: 310px;
-    /* Ajustar este valor según el ancho del menú lateral */
-}
-
-.sidebar {
-    width: 300px;
-    background-color: #f8f9fa;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: -300px;
-    transition: left 0.3s ease;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.sidebar.visible {
-    left: 0;
-}
-
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
+    background-color: #f0f0f0;
+    overflow-x: auto;
+    min-height: 50vh;
+    /* Ocupa el 90% de la altura de la pantalla */
+    position: relative;
+    /* Necesario para calcular correctamente la altura */
+    width: 100%;
+    height: auto;
+    /* Basado en su contenido */
 }
 
 .malla-container {
     display: flex;
     flex-wrap: nowrap;
-    /* Usar flexbox para las columnas */
 }
 
 .semestre-columna {
-    margin: 4px;
-    padding: 10px;
-    border: 1px solid #ccc;
+    margin-left: 4px;
+    padding-left: 5px;
     /* Borde para cada columna */
     border-radius: 5px;
-    background-color: #f9f9f9;
     /* Fondo claro para las columnas */
     display: flex;
     /* Asegúrate de que sea un contenedor flexible */
     flex-direction: column;
     /* Para apilar contenido verticalmente */
+    background-color: transparent;
+    border: none;
+    /* Quitar borde de cada semestre */
 }
 
 .contenido-semestre {
     display: flex;
-    height: auto;
-    /* Permitir que el alto se ajuste al contenido */
+    height: 100%;
+    /* Ocupa toda la altura disponible del contenedor */
     flex-grow: 1;
+    align-items: stretch;
+    /* Estira los elementos hijos */
 }
 
 .practica-columna {
-    background-color: #e9f7ef;
-    /* Fondo distinto para las prácticas */
+    background-color: #fafafa;
     width: 50px;
     padding: 0px;
-    border: 1px solid #28a745;
-    /* Borde verde para las prácticas */
-    border-radius: 5px;
+    border: 1px solid #0051ff;
+    border-radius: 50px;
     margin-right: 10px;
     /* Espacio entre las prácticas y las asignaturas */
     flex-wrap: 0;
+    min-height: 500px;
+    flex-grow: 1;
+    /* Permite que la columna de prácticas ocupe toda la altura */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* Distribuye el contenido verticalmente */
 }
 
 .ulAsignaturas {
     display: flex;
     flex-direction: column;
-    /* Apilar asignaturas verticalmente */
     flex-grow: 1;
-    /* Permitir que ocupe el espacio restante */
 }
 
 .ulPracticas {
     padding: 0px;
     height: 100%;
+    border-radius: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #fff;
 }
 
 .ilPracticas {
@@ -96,58 +101,281 @@
     display: flex;
     width: 100%;
     transform: rotate(90deg);
-    /* Espacio en cada elemento de la lista */
-    color: #555;
-    /* Color del texto */
+    color: #000000;
     white-space: nowrap;
-    /* Evitar que se divida en líneas */
 }
 
 .ilAsignaturas {
     text-align: center;
     padding: 5px;
-    /* Espacio en cada elemento de la lista */
     color: #555;
-    /* Color del texto */
 }
 
 .ilAsignaturas:hover,
 .ulPracticas:hover,
 .ulPracticas:hover .ilPracticas {
-    background-color: #333;
-    /* Cambiar color de fondo al pasar el ratón */
+    background-color: #ff6624;
     color: #fff;
-    /* Cambiar color de texto para mayor contraste */
 }
-
 
 .cuadro {
     min-width: 150px;
+    min-height: 100px;
+    align-content: center;
     padding: 10px;
-    border: 1px solid #007bff;
+    border: 1px solid #000000;
     /* Borde azul para las asignaturas */
-    border-radius: 5px;
+    border-radius: 20px;
     margin-bottom: 5px;
-    /* Espacio entre los cuadros */
-    background-color: #f1f1f1;
-    /* Fondo para los cuadros */
+    transition: background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+}
+
+.tittle {
+    font-family: 'Arial', sans-serif;
+    font-size: 2rem; /* Tamaño relativo */
+    font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: 0.2rem solid #000080; /* Ajustado */
+    width:fit-content;
 }
 
 h3 {
     text-align: center;
-    /* Centrar el título del semestre */
     font-size: 1.2rem;
-    /* Tamaño de fuente */
     color: #333;
-    /* Color del texto */
     white-space: nowrap;
-    /* Evitar que se divida en líneas */
 }
 
-ul {
-    padding-left: 20px;
+/* Enlace sin interacción */
+.lireq {
+    color: blue;
+    /* Color predeterminado del texto */
+    text-decoration: underline;
+    /* Subrayado predeterminado */
+    cursor: pointer;
 }
 
-ul li {
+/* Enlace visitado */
+.lireq:visited {
+    color: purple;
+    /* Cambia de color si ya fue visitado */
+}
+
+/* Enlace enfocado */
+.lireq:focus {
+    outline: 2px solid #0056b3;
+    /* Agrega un borde de enfoque */
+}
+
+/* Enlace activo */
+.lireq:active {
+    color: purple;
+    /* Cambia el color mientras está siendo pulsado */
+    text-decoration: underline;
+    /* Mantiene o cambia el subrayado */
+}
+
+.simulador-button-container {
+    position:absolute;
+    top: 2px;
+    right: 5px;
+}
+
+.simulador-button {
+    width: 100%;
+    min-width: 150px;
+    padding: 10px;
+    border: 1px solid #011b36;
+    border-radius: 10px;
+    background-color: #2b41ff;
+    color: #fff8f8;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.simulador-button:hover {
+    background-color: #59a5f7;
+    color: #fff;
+}
+
+.logo-ucen {
+    max-width: 35vh;
+    margin-top: 20px;
+}
+
+.container-malla {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.sidebar {
+    position: relative;
+    width: 300px;  /* Ancho de la sidebar */
+    height: auto;  /* Altura se adapta al contenido */
+    background-color: #ffffff;
+    padding: 20px;
+    margin-left: -300px; /* Empuja la sidebar fuera de la pantalla */
+    transition: margin-left 0.3s ease;  /* Transición suave para abrir/cerrar */
+  }
+
+.sidebar .close-menu-button {
+    position: absolute;
+    bottom: 90px;
+    /* Ajusta según lo que necesites */
+    right: -15px;
+    /* Parte del botón sobresale del contenedor */
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 99;
+    /* Asegúrate de que esté encima del contenido */
+}
+
+.sidebar .close-menu-button:hover {
+    background-color: #555;
+    transform: scale(1.1);
+    /* Pequeño efecto de agrandamiento al pasar el mouse */
+}
+
+.sidebar.visible {
+  margin-left: 0;  /* Muestra la sidebar */
+}
+
+.sidebar.hidden {
+  margin-left: -300px;  /* La oculta fuera de la pantalla */
+}
+/* Añadir una clase que desplace todo el contenido a la derecha cuando el menú esté visible */
+
+.menu-visible .malla-curricular {
+    /* Ajusta este valor según el ancho del menú lateral */
+    transition: margin-left 0.3s ease;
+}
+
+.Categoria1 {
+    background-color: #1464f6;
+    color: #fff;
+}
+
+.Categoria2 {
+    background-color: #033076;
+    color: #fff;
+}
+
+.Categoria3 {
+    background-color: #606060;
+    color: #fff;
+}
+
+.Categoria4 {
+    background-color: #d5d5d5;
+    color: #000000;
+}
+
+.Práctica {
+    border-color: #000000;
+    background-color: white;
+}
+
+.loading-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+.loading-screen p {
+    margin-top: 1rem;
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.leyenda {
+    justify-content: center;
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
     margin-bottom: 10px;
+}
+
+.leyendas {
+    margin: 16px;
+    margin-bottom: 0px;
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.leyenda h3 {
+    margin-bottom: 8px;
+}
+
+.leyenda-fila {
+    display: flex;
+    /* Alinea los elementos en fila */
+    gap: 16px;
+    /* Espaciado entre elementos */
+    align-items: center;
+    /* Alineación vertical */
+    flex-wrap: wrap;
+    /* Permite que los elementos pasen a una nueva línea si es necesario */
+}
+
+.leyenda-item {
+    display: flex;
+    align-items: center;
+}
+
+.leyenda-item span {
+    margin-left: 8px;
+    font-size: 14px;
+}
+
+/* Ajustes generales para pantallas pequeñas */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .header h2 {
+        font-size: 1rem;
+        margin-left: 0;
+    }
+
+    /* Imagen del logo: reducir tamaño y centrar */
+    .logo-ucen {
+        max-width: 20vh;
+        margin-bottom: 10px;
+    }
+
+    .simulador-button {
+        font-size: 2vh;
+    }
+
+    .informacion select {
+        font-size: 2vh;
+    }
 }

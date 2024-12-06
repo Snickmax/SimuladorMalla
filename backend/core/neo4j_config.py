@@ -1,16 +1,13 @@
 from neo4j import GraphDatabase
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from django.conf import settings
 
 class Neo4jConnection:
     def __init__(self):
+        db_config = settings.NEO4J_DATABASES['default']
         self.driver = GraphDatabase.driver(
-            os.getenv('NEO4J_URI'),
-            auth=(os.getenv('NEO4J_USERNAME'), os.getenv('NEO4J_PASSWORD'))
+            db_config['HOST'],
+            auth=(db_config['USER'], db_config['PASSWORD'])
         )
-        self.driver.verify_connectivity()
 
     def close(self):
         self.driver.close()

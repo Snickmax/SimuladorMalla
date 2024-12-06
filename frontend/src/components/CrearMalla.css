@@ -1,0 +1,140 @@
+/* Estilo para el contenedor general */
+.crear-malla-container {
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.eliminar-semestre-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Estilo común para los botones de agregar semestre, guardar, editar, eliminar */
+.agregar-semestre-btn,
+.guardar-asignatura-btn,
+.guardar-cambios-btn,
+.edit-Button,
+.close-Button {
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: inline-block;
+  margin: 10px 0;
+}
+
+
+.agregar-semestre-btn,
+.guardar-asignatura-btn,
+.guardar-cambios-btn{
+  padding: 10px 20px;
+}
+.edit-Button,
+.close-Button {
+  padding: 5px 20px;
+}
+
+.agregar-semestre-btn,
+.guardar-asignatura-btn,
+.edit-Button {
+  background-color: #4CAF50; /* Verde */
+  color: white;
+}
+
+.eliminar-semestre-btn,
+.close-Button {
+  background-color: #f44336; /* Rojo */
+  color: white;
+}
+
+.guardar-cambios-btn{
+  background-color: #2a439f; /* Verde */
+  color: white;
+}
+
+/* Hover y efecto de clic para botones */
+.agregar-semestre-btn:hover,
+.guardar-cambios-btn:hover,
+.guardar-asignatura-btn:hover,
+.edit-Button:hover,
+.eliminar-semestre-btn:hover,
+.close-Button:hover {
+  transform: scale(1.05); /* Efecto de agrandar el botón */
+}
+
+.agregar-semestre-btn:active,
+.guardar-asignatura-btn:active,
+.edit-Button:active,
+.eliminar-semestre-btn:active,
+.close-Button:active {
+  background-color: #388e3c; /* Verde más oscuro para los botones verdes */
+}
+
+.guardar-cambios-btn:active{
+  background-color: #112260;
+}
+
+.eliminar-semestre-btn:active,
+.close-Button:active {
+  background-color: #d32f2f; /* Rojo más oscuro para los botones rojos */
+}
+
+/* Estilos adicionales */
+.semestres-row {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+}
+
+.semestre-column {
+  flex: 1;
+  min-width: 200px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  position: relative;
+  min-width: 500px;
+}
+
+.asignaturas-container {
+  margin-top: 10px;
+}
+
+.asignatura {
+  background-color: #e7e7e7;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nueva-asignatura-form {
+  margin-top: 10px;
+}
+
+.nueva-asignatura-form input,
+.nueva-asignatura-form textarea,
+.nueva-asignatura-form select {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
